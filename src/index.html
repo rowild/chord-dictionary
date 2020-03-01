@@ -47,10 +47,6 @@
 
             <nav class="[ nav ] flex flex-wrap items-center pt-4 pb-8">
                 <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Chord Dictionary</a>
-                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 2</a>
-                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 3</a>
-                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 4</a>
-                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 5</a>
             </nav>
 
         </div>
@@ -63,16 +59,9 @@
                     <header>
                         <h1 class="text-xl font-semibold mb-6">Resulting Chord</h1>
                     </header>
-                    <!--
-                    <p class="text-gray-500 font-weight-100 text-sm mb-3">Deploys from Github. Owned by Robert Wildling.</p>
-                    <p class="text-gray-500 font-weight-100 text-sm mb-3">
-                        <a href="#" class="text-gray-700 inline-block underline">rowild.at</a>
-                    </p>
-                    <p class="text-gray-500 font-weight-100 text-sm">Last Update: 12.2.2020 (2 days ago)</p>
-                    -->
                     <p class="mb-3">
                         <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Root Note:</span>
-                        <span id="chosen-root-note">C1. (Please select a note and an octave to change)</span>
+                        <span id="chosen-root-note">C1</span>
                     </p>
                     <p class="mb-3">
                         <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Chord:</span>
@@ -87,11 +76,9 @@
                         <span id="notes-result"></span>
                     </p>
                 </div>
-                <div class="hidden lg:block">
-                    <a href="#" class="block relative rounded-md overflow-hidden">
-                        <img src="assets/unnamed.jpg" alt="That's me!" class="block w-36" />
-                        <span class="absolute bg-black-20 inset-0 rounded-md hover:opacity-0"></span>
-                    </a>
+                <div class="block">
+                    <div id="notated-result" class="block relative rounded-md w-56 h-56 border border-gray-500">
+                    </div>
                 </div>
             </div>
         </section>

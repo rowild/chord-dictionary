@@ -7,16 +7,21 @@ import { note, transpose } from '@tonaljs/tonal'
 import { chord } from '@tonaljs/chord'
 import { entries } from '@tonaljs/chord-dictionary';
 import { Howler, howl } from 'howler'
+import Vex from 'vexflow/src/index.js'
 
+// Important containers
 const startNoteSelector = document.getElementById('note-selector')
 const octaveSelector = document.getElementById('octave-selector')
 const chordSelector = document.getElementById('chord-selector')
 
-const chosenRootNote = document.getElementById('chosen-root-note')
-const chosenChord = document.getElementById('chosen-chord')
-const chordResult = document.getElementById('chord-result')
-const notesResult = document.getElementById('notes-result')
+const chosenRootNoteElem = document.getElementById('chosen-root-note')
+const chosenChordElem = document.getElementById('chosen-chord')
+const chordResultElem = document.getElementById('chord-result')
+const notesResultElem = document.getElementById('notes-result')
 
+const notatedResultElem = document.getElementById('notated-result')
+
+// Howler initialisation
 const sound = new Howl({
   src: ['assets/sounds.mp3'],
   onload() {
@@ -28,6 +33,13 @@ const sound = new Howl({
   }
 })
 
+// VexFlow initialisation
+const VF = Vex.Flow
+let renderer = undefined // will be defined in setupNotation()
+let context = undefined
+let stave = undefined
+
+// Custom App
 const startNotes = [
   ['C', 'B#'],
   ['C#', 'Db'],
@@ -53,14 +65,10 @@ let selectedChord = null
 const octaves = Array.from(new Array(7), (x, index) => index + 1)
 
 const app = {
-  clearSelectors() {
-    startNoteSelector.length = 0
-    octaveSelector.length = 0
-  },
-  updateChosenRootNote() {
-    chosenRootNote.textContent = selectedStartNote + selectedOctave
+  updateChosenRootNoteElem() {
+    chosenRootNoteElem.textContent = selectedStartNote + selectedOctave
     if(selectedChord !== null) {
-      chosenChord.textContent = selectedChord
+      chosenChordElem.textContent = selectedChord
     }
   },
   setupStartNotes() {
@@ -97,33 +105,77 @@ const app = {
     startNoteSelector.addEventListener('click', (e) => {
       if(e.target.tagName === 'DIV') return
       selectedStartNote = e.target.textContent
-      this.updateChosenRootNote()
+      this.updateChosenRootNoteElem()
     })
     octaveSelector.addEventListener('click', (e) => {
       if(e.target.tagName === 'DIV') return
       selectedOctave = e.target.textContent
-      this.updateChosenRootNote()
+      this.updateChosenRootNoteElem()
     })
     chordSelector.addEventListener('click', (e) => {
       // If we do not click on one of the enclosed buttons, but on the parent DIV, exit
       if(e.target.tagName === 'DIV') return
       selectedChord = e.target.textContent
+      this.updateChosenRootNoteElem()
       this.displayChordInfo()
     })
   },
   displayChordInfo() {
     const chordIntervals = chord(selectedChord).intervals
-    chordResult.textContent = chordIntervals.join(' – ')
-
+    chordResultElem.textContent = chordIntervals.join(' – ')
     const userCreatedRootNote = selectedStartNote + selectedOctave
-
     const transposedNotes = chordIntervals.map(val => {
       return transpose(userCreatedRootNote, val)
     })
-
-    notesResult.textContent = transposedNotes.join(' – ');
+    notesResultElem.textContent = transposedNotes.join(' – ');
 
     soundEngine.playResult(transposedNotes)
+    this.drawNotes(transposedNotes)
+  },
+  setupStave(clef = 'treble') {
+    renderer = new VF.Renderer(notatedResultElem, VF.Renderer.Backends.SVG)
+    renderer.resize(224, 224) // 224 = w-56 (14rem) = 14*16
+    context = renderer.getContext();
+    stave = new VF.Stave(10,40,200)
+    stave.addClef(clef)
+      // .addTimeSignature('4/4')
+    stave.setContext(context).draw()
+  },
+  drawNotes(notes) {
+    // Calculate clef
+    let lowestNoteInChord = parseInt(notes[0].slice(-1))
+    let highestNoteInChord = parseInt(notes[notes.length - 1].slice(-1))
+    let clef = (lowestNoteInChord > 2 && highestNoteInChord > 3) ? 'treble' : 'bass'
+
+    // Re-draw the canvas
+    if(context.svg.childNodes) {
+      notatedResultElem.removeChild(context.svg)
+      this.setupStave(clef)
+    }
+
+    let vexAccidentals = []
+    let vexNotes = notes.map(n => {
+      let note = n.slice(0, -1).toLowerCase()
+      let register = n.slice(-1)
+
+      // Check, if there are accidentals
+      vexAccidentals.push(note.slice(1,note.length))
+
+      // Build the not in form of "c/4"
+      return note + '/' + register
+    })
+
+    // Draw notes
+    let staveNotes = [
+      new VF.StaveNote({ clef: clef, keys: vexNotes, duration: "w" })
+    ]
+
+    vexAccidentals.map((acc, index) => {
+      if(acc === '') return
+      staveNotes[0].addAccidental(index, new VF.Accidental(acc))
+    })
+
+    Vex.Flow.Formatter.FormatAndDraw(context, stave, staveNotes)
   },
   createElem(elemType, val) {
     const elem = document.createElement(elemType)
@@ -136,6 +188,7 @@ const app = {
     this.setupOctaves()
     this.setupChordBtns()
     this.setupEventListeners()
+    this.setupStave()
   }
 }
 
