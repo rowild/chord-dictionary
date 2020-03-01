@@ -7,6 +7,8 @@ import { note, transpose } from '@tonaljs/tonal'
 import { chord } from '@tonaljs/chord'
 import { entries } from '@tonaljs/chord-dictionary';
 import { Howler, howl } from 'howler'
+import { TweenMax, Power2 } from 'gsap'
+import debounce from 'lodash-es/debounce'
 import Vex from 'vexflow/src/index.js'
 
 // Important containers
@@ -20,6 +22,8 @@ const chordResultElem = document.getElementById('chord-result')
 const notesResultElem = document.getElementById('notes-result')
 
 const notatedResultElem = document.getElementById('notated-result')
+
+const inputField = document.getElementById('filterChords')
 
 // Howler initialisation
 const sound = new Howl({
@@ -119,6 +123,7 @@ const app = {
       this.updateChosenRootNoteElem()
       this.displayChordInfo()
     })
+    inputField.addEventListener('keyup', debounce(this.filterChords, 500))
   },
   displayChordInfo() {
     const chordIntervals = chord(selectedChord).intervals
@@ -134,9 +139,9 @@ const app = {
   },
   setupStave(clef = 'treble') {
     renderer = new VF.Renderer(notatedResultElem, VF.Renderer.Backends.SVG)
-    renderer.resize(224, 224) // 224 = w-56 (14rem) = 14*16
+    renderer.resize(260, 140) // 224 = w-56 (14rem) = 14*16
     context = renderer.getContext();
-    stave = new VF.Stave(10,40,200)
+    stave = new VF.Stave(10,20,240)
     stave.addClef(clef)
       // .addTimeSignature('4/4')
     stave.setContext(context).draw()
@@ -181,6 +186,38 @@ const app = {
     const elem = document.createElement(elemType)
     elem.innerText = val
     return elem
+  },
+  filterChords (e) {
+    // Declare variables
+    let i, input, filter, chordItems, txtValue, counter, foundItems
+
+    input = document.getElementById('filterChords')
+    chordItems = document.querySelectorAll('#chord-selector button')
+    foundItems = document.getElementById('found-items')
+    filter = input.value // case sensitive!
+    counter = 0
+
+    // Loop through all items and hide those who don't match the search query
+    for (i = 0; i < chordItems.length; i++) {
+      counter++
+
+      const txtValue = chordItems[i].textContent
+      const itemStyles = chordItems[i].currentStyle || window.getComputedStyle(chordItems[i])
+      const h = chordItems[i].offsetHeight
+      const w = chordItems[i].offsetWidth
+
+      if (txtValue.indexOf(filter) > -1) {
+        TweenMax.set(chordItems[i], { display: 'block' })
+      }
+      else {
+        // If no chord is found, decrement the counter
+        counter--
+        TweenMax.set(chordItems[i], { display: 'none' })
+      }
+    }
+
+    // Display the counter result
+    foundItems.textContent = 'Found ' + counter + ' chords.'
   },
   init() {
     // this.clearSelectors()
