@@ -1,0 +1,16 @@
+@tailwind base;
+
+#chord-selector button {
+  /* @apply w-24 shadow font-semibold text-gray-700 text-sm border border-gray-200 p-2 mr-4 mb-4 rounded bg-gray-100; */
+  @apply w-24 bg-teal-500 rounded text-white inline-block relative border-transparent p-3 mb-2 mr-2;
+  transition: all .35ms
+}
+
+#chord-selector button:hover {
+  /* @apply bg-gray-200 text-black; */
+  @apply bg-teal-400;
+}
+
+@tailwind components;
+
+@tailwind utilities;
