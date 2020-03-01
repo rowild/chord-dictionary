@@ -1,11 +1,25 @@
 @tailwind base;
 
-#chord-selector button {
+#note-selector button,
+#octave-selector button {
   /* @apply w-24 shadow font-semibold text-gray-700 text-sm border border-gray-200 p-2 mr-4 mb-4 rounded bg-gray-100; */
-  @apply w-24 bg-teal-500 rounded text-white inline-block relative border-transparent p-3 mb-2 mr-2;
+  @apply inline-block relative w-8 h-8 bg-teal-500 rounded text-white border-transparent p-1 mb-2 mr-2 outline-none;
   transition: all .35ms
 }
 
+#note-selector .flex button:nth-of-type(2n) {
+  @apply bg-teal-300;
+}
+
+#chord-selector button {
+  /* @apply w-24 shadow font-semibold text-gray-700 text-sm border border-gray-200 p-2 mr-4 mb-4 rounded bg-gray-100; */
+  @apply w-24 bg-teal-500 rounded text-white inline-block relative border-transparent p-3 mb-2 mr-2 outline-none;
+  transition: all .35ms
+}
+
+#note-selector button:hover,
+#note-selector button:nth-of-type(2n):hover,
+#octave-selector button:hover,
 #chord-selector button:hover {
   /* @apply bg-gray-200 text-black; */
   @apply bg-teal-400;

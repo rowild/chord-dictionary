@@ -17,6 +17,7 @@
             <div class="[ logo-avatar ] flex justify-between items-center py-4 border-b border-gray-700">
 
                 <div class="flex items-center">
+
                     <a href="#" class="hover:text-gray-200 hover:bg-black-20">
                         <svg class="block w-8 h-8 mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                             <path d="M20 2.5V0L6 2v12.17A3 3 0 0 0 5 14H3a3 3 0 0 0 0 6h2a3 3 0 0 0 3-3V5.71L18 4.3v7.88a3 3 0 0 0-1-.17h-2a3 3 0 0 0 0 6h2a3 3 0 0 0 3-3V2.5z" />
@@ -25,13 +26,15 @@
 
                     <div class="inline-flex items-center text-xl font-semibold">
                         <a href="#" class="inline-flex items-center px-2 py-3 hover:text-gray-200">
-                            <span class="whitespace-no-wrap">Chord Dictionary</span>
+                            <span class="whitespace-no-wrap">Music Theory Tools</span>
+                        </a>
+
+                        <!--
                             <svg fill="currentColor" class="w-8 h-8 pl-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z" />
                             </svg>
-                        </a>
-
-                        <a href="#" class="pr-2 py-3 hover:text-gray-200 whitespace-no-wrap">Subtitle</a>
+                            <a href="#" class="pr-2 py-3 hover:text-gray-200 whitespace-no-wrap">Subtitle</a>
+                        -->
                     </div>
 
                 </div>
@@ -43,7 +46,7 @@
             </div>
 
             <nav class="[ nav ] flex flex-wrap items-center pt-4 pb-8">
-                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 1</a>
+                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Chord Dictionary</a>
                 <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 2</a>
                 <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 3</a>
                 <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Link 4</a>
@@ -53,18 +56,36 @@
         </div>
     </header>
 
-    <div class="before:bg-header mb-8">
+    <div class="[ card results ] before:bg-header mb-8">
         <section class="container mx-auto px-6">
             <div class="flex bg-white p-6 shadow rounded-md md:w-3/4">
                 <div class="flex-1">
                     <header>
-                        <h1 class="text-xl font-semibold mb-3">Settings for Robert The Master</h1>
+                        <h1 class="text-xl font-semibold mb-6">Resulting Chord</h1>
                     </header>
+                    <!--
                     <p class="text-gray-500 font-weight-100 text-sm mb-3">Deploys from Github. Owned by Robert Wildling.</p>
                     <p class="text-gray-500 font-weight-100 text-sm mb-3">
                         <a href="#" class="text-gray-700 inline-block underline">rowild.at</a>
                     </p>
                     <p class="text-gray-500 font-weight-100 text-sm">Last Update: 12.2.2020 (2 days ago)</p>
+                    -->
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Root Note:</span>
+                        <span id="chosen-root-note">C1. (Please select a note and an octave to change)</span>
+                    </p>
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Chord:</span>
+                        <span id="chosen-chord">Please select a chord structure.</span>
+                    </p>
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Intervals:</span>
+                        <span id="chord-result"></span>
+                    </p>
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Notes:</span>
+                        <span id="notes-result"></span>
+                    </p>
                 </div>
                 <div class="hidden lg:block">
                     <a href="#" class="block relative rounded-md overflow-hidden">
@@ -76,79 +97,41 @@
         </section>
     </div>
 
-    <div class="container mx-auto px-6">
+    <section class="[ chord-builder-section ] container mx-auto px-6">
+
         <div class="flex flex-column flex-wrap">
+            <div class="[ define-note-octave ] relative w-64 pr-6 mb-6">
 
-            <div class="relative w-full lg:w-64 lg:pr-6 mb-6">
-                <div class="flex flex-col bg-white border rounded sticky top-0 mb-6">
-                    <div class="h-8">
-                        <label for="select-note" class="inline-block relative w-full p-3">Choose a Start Note</label>
-                    </div>
-                    <div class="border-b border-gray-200 h-10 p-2">
-                        <select name="select-note" id="select-note" class="inline-block relative w-full border-transparent"></select>
-                    </div>
-                    <div class="h-8">
-                        <label for="select-octave" class="inline-block relative w-full p-3">Choose an Octave</label for="select-octave">
-                    </div>
-                    <div class="border-b border-gray-200 h-10 p-2">
-                        <select name="select-octave" id="select-octave" class="inline-block relative w-full border-transparent p-3"></select>
-                    </div>
+                <h2 class="text-xl font-semibold mb-2">Choose</h2>
+
+                <div class="flex justify-around px-3 mb-6">
+                    <p class="text-gray-500">Note</p>
+                    <p class="text-gray-500">Octave</p>
                 </div>
 
-                <!--
-                <div class="flex flex-col bg-white rounded sticky top-0 mb-6">
-                    <button class="bg-teal-500 rounded text-white inline-block relative w-full border-transparent p-3 mb-2 hover:bg-teal-400">Major</button>
-                    <button class="bg-teal-500 rounded text-white inline-block relative w-full border-transparent p-3 mb-2 hover:bg-teal-400">Minor</button>
-                    <button class="bg-teal-500 rounded text-white inline-block relative w-full border-transparent p-3 mb-2 hover:bg-teal-400">Diminished</button>
-                    <button class="bg-teal-500 rounded text-white inline-block relative w-full border-transparent p-3 hover:bg-teal-400">Augmented</button>
+                <div class="flex flex-col bg-white shadow rounded sticky top-0 mb-6">
+                    <div class="flex">
+                        <div class="w-1/2 border-r border-gray-200">
+                            <div id="note-selector" class="flex flex-col flex-wrap relative px-5 pt-5 pb-3"></div>
+                        </div>
+
+                        <div class="w-1/2">
+                            <div id="octave-selector" class="flex flex-col flex-wrap items-center relative px-5 pt-5 pb-3"></div>
+                        </div>
+                    </div>
                 </div>
-                -->
             </div>
 
             <div class="flex-1 mb-6">
-                <h2 class="text-xl font-semibold mb-2">Chord buttons</h2>
-                <p class="text-gray-500 mb-6">Click on a buttone</p>
+                <h2 class="text-xl font-semibold mb-2">Chord Structures</h2>
+                <p class="text-gray-500 mb-6 text-center">Click on the respective button to generate the chord notes</p>
 
                 <div class="bg-white rounded-md shadow mb-4">
-                    <div id="chord-selector" class="flex flex-wrap align-top justify-between p-5"></div>
-                </div>
-
-                <div class="bg-white rounded-md shadow mb-4">
-                    <div class="p-5">
-                        <h3 class="text-xl font-semibold mb-2 pb-2 border-b-2 border-gray-100">Add-ons</h3>
-                        <p class="text-gray-500">This site doesn't use any addons.</p>
-                    </div>
-                    <table class="w-full mb-6">
-                        <tr>
-                            <td class="py-3 px-5 w-1/4">Site name:</td>
-                            <td class="py-3 px-5 w-3/4 text-black font-semibold"><a href="#">rowild.at</a></td>
-                        </tr>
-                        <tr class="bg-gray-100">
-                            <td class="py-3 px-5 w-1/4">Owner:</td>
-                            <td class="py-3 px-5 w-3/4 text-black font-semibold">Robert M Wildling</td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-5 w-1/4">Repository:</td>
-                            <td class="py-3 px-5 w-3/4 text-black font-semibold"><a href="#">github.com/rowild/that-s-me</a></td>
-                        </tr>
-                        <tr class="bg-gray-100">
-                            <td class="py-3 px-5 w-1/4">API ID:</td>
-                            <td class="py-3 px-5 w-3/4 text-black font-semibold">42999d0e-b865-1234-bfg3-sue83if710p</td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-5 w-1/4">Created:</td>
-                            <td class="py-3 px-5 w-3/4 text-black font-semibold">Mar 4 at 1:15 PM</td>
-                        </tr>
-                        <tr class="bg-gray-100">
-                            <td class="py-3 px-5 w-1/4">Last Update:</td>
-                            <td class="py-3 px-5 w-3/4 text-black font-semibold">Apr 15 at 4:29 AM</td>
-                        </tr>
-                    </table>
-                    <button class="shadow font-semibold text-gray-700 text-sm border border-gray-200 p-2 mx-4 mb-4 rounded bg-gray-100 hover:bg-white hover:text-black">Change site name</button>
+                    <div id="chord-selector" class="flex flex-wrap justify-between p-5"></div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <div class="bg-black">
         <div class="container mx-auto px-6">
