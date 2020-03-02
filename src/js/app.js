@@ -5,7 +5,7 @@
 */
 import { note, transpose } from '@tonaljs/tonal'
 import { chord } from '@tonaljs/chord'
-import { entries } from '@tonaljs/chord-dictionary';
+import { entries, chordType } from '@tonaljs/chord-dictionary';
 import { Howler, howl } from 'howler'
 import { TweenMax, Power2 } from 'gsap'
 import debounce from 'lodash-es/debounce'
@@ -39,6 +39,7 @@ const sound = new Howl({
 
 // VexFlow initialisation
 const VF = Vex.Flow
+VF.Clef.DEBUG = true
 let renderer = undefined // will be defined in setupNotation()
 let context = undefined
 let stave = undefined
@@ -66,7 +67,7 @@ let selectedChord = null
 
 // ES6 Array methods:
 // @see https://www.freecodecamp.org/news/https-medium-com-gladchinda-hacks-for-creating-javascript-arrays-a1b80cb372b/
-const octaves = Array.from(new Array(7), (x, index) => index + 1)
+const octaves = Array.from(new Array(8), (x, index) => index)
 
 const app = {
   updateChosenRootNoteElem() {
@@ -100,7 +101,11 @@ const app = {
     })
   },
   setupChordBtns() {
-    const chordEntry = entries().map(entry => {
+    const chordEntry = entries().map((entry, index) => {
+      // 34 = dim, 38 = dim7, 96 = alt7
+      // if(index >= 34 && index <= 38 || index === 96) {
+      //   console.log(index + '. entry =', entry);
+      // }
       const chordBtn = this.createElem('button', entry.aliases[0])
       chordSelector.append(chordBtn)
     })
@@ -126,8 +131,21 @@ const app = {
     inputField.addEventListener('keyup', debounce(this.filterChords, 500))
   },
   displayChordInfo() {
-    const chordIntervals = chord(selectedChord).intervals
+    if(selectedChord === 'dim' || selectedChord === 'dim7') {
+      selectedChord = '°7'
+    }
+
+    // "alt7" causes troubles. This might affect more than just "alt7" chord,
+    // since it is a check agains "emptry === true", which is the case with
+    // various chords
+    let chordIntervals = null;
+    if(chord(selectedChord).empty !== true) {
+      chordIntervals = chord(selectedChord).intervals
+    } else {
+      chordIntervals = chordType(selectedChord).intervals
+    }
     chordResultElem.textContent = chordIntervals.join(' – ')
+
     const userCreatedRootNote = selectedStartNote + selectedOctave
     const transposedNotes = chordIntervals.map(val => {
       return transpose(userCreatedRootNote, val)
@@ -137,12 +155,23 @@ const app = {
     soundEngine.playResult(transposedNotes)
     this.drawNotes(transposedNotes)
   },
-  setupStave(clef = 'treble') {
+  setupStave(clefDef = {}) {
+    console.log('clefDef =', clefDef);
     renderer = new VF.Renderer(notatedResultElem, VF.Renderer.Backends.SVG)
-    renderer.resize(260, 140) // 224 = w-56 (14rem) = 14*16
+    renderer.resize(280, 200) // 224 = w-56 (14rem) = 14*16
     context = renderer.getContext();
     stave = new VF.Stave(10,20,240)
-    stave.addClef(clef)
+    // stave.addClef(type, size, annotation)
+    //   size = "default" or "small"
+    //   annotation = "8va" or "8vb"; pass "undefined", if no annotation is wanted
+    if(Object.entries(clefDef).length === 0 && clefDef.constructor === Object) {
+      clefDef = {
+        clefType: 'treble',
+        clefSize: 'default',
+        clefAnnotation: undefined
+      }
+    }
+    stave.addClef(clefDef.clefType, clefDef.clefSize, clefDef.clefAnnotation)
       // .addTimeSignature('4/4')
     stave.setContext(context).draw()
   },
@@ -150,37 +179,69 @@ const app = {
     // Calculate clef
     let lowestNoteInChord = parseInt(notes[0].slice(-1))
     let highestNoteInChord = parseInt(notes[notes.length - 1].slice(-1))
-    let clef = (lowestNoteInChord > 2 && highestNoteInChord > 3) ? 'treble' : 'bass'
+
+    console.log('highestNoteInChord =', highestNoteInChord);
+
+    let clefType = 'treble'
+    let clefSize = 'default' // "default" or "small"
+    let clefAnnotation = undefined // ottava symbol
+
+    if (lowestNoteInChord > 5 || highestNoteInChord > 6) {
+      clefAnnotation = '8va'
+    }
+    else if (highestNoteInChord >= 2 && highestNoteInChord < 4) {
+      clefType = 'bass'
+    }
+    else if(highestNoteInChord < 2) {
+      clefType = 'bass'
+      clefAnnotation = '8vb'
+    }
+
+    // ES6 notation! ( ... clefType: clefType ...)
+    const clefDef = { clefType, clefSize, clefAnnotation }
 
     // Re-draw the canvas
     if(context.svg.childNodes) {
       notatedResultElem.removeChild(context.svg)
-      this.setupStave(clef)
+      this.setupStave(clefDef)
     }
 
+    // "Collect" accidentals
     let vexAccidentals = []
+
+    // "Collect" VexFlow-readable notes, transposed, if clef has annotation
     let vexNotes = notes.map(n => {
       let note = n.slice(0, -1).toLowerCase()
       let register = n.slice(-1)
+
+      // Transpose notes, if the clef received an annotation
+      if(clefAnnotation === '8vb') {
+        register = parseInt(register) + 1
+      }
+      if(clefAnnotation === '8va') {
+        register = parseInt(register) - 1
+      }
 
       // Check, if there are accidentals
       vexAccidentals.push(note.slice(1,note.length))
 
       // Build the not in form of "c/4"
-      return note + '/' + register
+      return note + '/' + register.toString()
     })
 
     // Draw notes
     let staveNotes = [
-      new VF.StaveNote({ clef: clef, keys: vexNotes, duration: "w" })
+      new VF.StaveNote({ clef: clefType, keys: vexNotes, duration: "w" })
     ]
 
+    // Draw accidentals
     vexAccidentals.map((acc, index) => {
       if(acc === '') return
       staveNotes[0].addAccidental(index, new VF.Accidental(acc))
     })
 
-    Vex.Flow.Formatter.FormatAndDraw(context, stave, staveNotes)
+    // VexFlow helper function to format and build everything
+    VF.Formatter.FormatAndDraw(context, stave, staveNotes)
   },
   createElem(elemType, val) {
     const elem = document.createElement(elemType)
@@ -241,7 +302,7 @@ const soundEngine = {
     const loopStart = 24 // MIDI number of C1; if used with A0, use 21
     let startTimeIndex = 9000 // "sound.mp3" starts with A0, so "C1" is 6000ms into the file
 
-    for(let i = loopStart; i <= 96; i++) {
+    for(let i = loopStart; i <= 108; i++) {
       // add prites to Howler's sound object
       sound['_sprite'][i] = [startTimeIndex, lengthOfNote]
       // increment the startTimeIndex
