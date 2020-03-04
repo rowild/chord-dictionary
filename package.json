@@ -20,7 +20,7 @@
     "author": "Music and Coding Youtube Channel, Robert Wildling",
     "license": "ISC",
     "dependencies": {
-        "@tonaljs/modules": "^3.4.3",
+        "@tonaljs/modules": "^3.4.4",
         "@types/vexflow": "^1.2.33",
         "gsap": "^3.2.4",
         "howler": "^2.1.3",

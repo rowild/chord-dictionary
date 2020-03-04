@@ -41,7 +41,7 @@ module.exports = {
     // Deprectaed with v1.2
     // require('tailwindcss-transforms'),
     // require('tailwindcss-transitions'),
-    require('tailwindcss-border-gradients'),
+    // require('tailwindcss-border-gradients'),
     require('tailwindcss-aspect-ratio'),
     require('tailwindcss-pseudo-elements'),
     function({ addUtilities }) {

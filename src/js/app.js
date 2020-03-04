@@ -131,19 +131,22 @@ const app = {
     inputField.addEventListener('keyup', debounce(this.filterChords, 500))
   },
   displayChordInfo() {
-    if(selectedChord === 'dim' || selectedChord === 'dim7') {
-      selectedChord = '°7'
-    }
+    // Workaround pre-tonaljs 3.4.4
+    // if(selectedChord === 'dim' || selectedChord === 'dim7') {
+    //   selectedChord = '°7'
+    // }
 
     // "alt7" causes troubles. This might affect more than just "alt7" chord,
     // since it is a check agains "emptry === true", which is the case with
     // various chords
-    let chordIntervals = null;
-    if(chord(selectedChord).empty !== true) {
-      chordIntervals = chord(selectedChord).intervals
-    } else {
-      chordIntervals = chordType(selectedChord).intervals
-    }
+    // let chordIntervals = null;
+    // if(chord(selectedChord).empty !== true) {
+    //   chordIntervals = chord(selectedChord).intervals
+    // } else {
+    //   chordIntervals = chordType(selectedChord).intervals
+    // }
+
+    let chordIntervals = chord(selectedChord).intervals
     chordResultElem.textContent = chordIntervals.join(' – ')
 
     const userCreatedRootNote = selectedStartNote + selectedOctave
@@ -179,8 +182,6 @@ const app = {
     // Calculate clef
     let lowestNoteInChord = parseInt(notes[0].slice(-1))
     let highestNoteInChord = parseInt(notes[notes.length - 1].slice(-1))
-
-    console.log('highestNoteInChord =', highestNoteInChord);
 
     let clefType = 'treble'
     let clefSize = 'default' // "default" or "small"
