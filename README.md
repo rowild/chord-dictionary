@@ -5,12 +5,12 @@ A chord visualizer with playback functionality using TonalJS, Howler.js, and Vex
 ## ⚠️ Important Requirements
 
 ### Node.js Version
-**REQUIRED: Node.js v16.x**
+**COMPATIBLE: Node.js v16.x to v22.x**
 ```bash
-# Use Node Version Manager to switch
-nvm use 16
+# Use Node Version Manager to switch to any compatible version
+nvm use 16  # or 18, 20, 22
 ```
-**Note:** Newer versions (v18+, v22+) cause Babel compatibility issues with this project.
+**Note:** Node versions 16 through 22 are tested and working with the current build system.
 
 ### Dependencies
 - **TonalJS 3.4.4+** - Music theory library (fixes dim, dim7, alt7 chords)
