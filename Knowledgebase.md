@@ -150,7 +150,69 @@ staveNotes[0].addModifier(new VF.Accidental(acc), index)
 - Each version requires careful testing of music notation rendering
 - Font loading may differ between versions
 
-## TonalJS Integration
+## TonalJS v4.8.11 Breaking Changes
+
+### ⚠️ CRITICAL API CHANGES (v3.x → v4.x)
+
+#### Import Structure Changes
+**v3.x and earlier:**
+```javascript
+import { note, transpose } from '@tonaljs/tonal'
+import { chord } from '@tonaljs/chord'
+import { all, get } from '@tonaljs/chord-type'
+```
+
+**v4.x:**
+```javascript
+import { midi, transpose } from '@tonaljs/note'
+import { get as getChord } from '@tonaljs/chord'
+import { all as allChordTypes } from '@tonaljs/chord-type'
+```
+
+#### Function Call Changes
+**v3.x and earlier:**
+```javascript
+// Chord types
+const chordTypes = all()
+
+// Chord intervals
+const intervals = chord(chordName).intervals
+
+// Note transposition
+const newNote = transpose(rootNote, interval)
+
+// MIDI conversion
+const midiNumber = note(noteName).midi
+```
+
+**v4.x:**
+```javascript
+// Chord types
+const chordTypes = allChordTypes()
+
+// Chord intervals
+const intervals = getChord(chordName).intervals
+
+// Note transposition
+const newNote = transpose(rootNote, interval)
+
+// MIDI conversion
+const midiNumber = midi(noteName)
+```
+
+#### Migration Steps
+1. Update import statements to use individual function imports
+2. Change function calls from object methods to direct function calls
+3. Use `getChord()` instead of `chord()`
+4. Use `allChordTypes()` instead of `all()`
+5. Use `midi()` function instead of `note().midi`
+
+#### Key Differences
+- **Modular imports**: Import specific functions instead of entire objects
+- **Function-based API**: Direct function calls instead of object methods
+- **Consistent naming**: More explicit function names (e.g., `getChord`, `allChordTypes`)
+
+## TonalJS Integration (Legacy v3.x)
 - Fixed import: `import { all, get } from '@tonaljs/chord-type'`
 - Uses `all()` instead of deprecated `entries()`
 - Version 3.4.4+ fixes dim, dim7, and alt7 chord issues
