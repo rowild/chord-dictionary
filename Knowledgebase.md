@@ -20,9 +20,9 @@ nvm use 16
 ## Project Architecture
 
 ### Build System
-- **Parcel 2.15.4** - Handles ES6 modules, PostCSS, and Tailwind CSS
-- **Tailwind CSS v3.4.17** - Modern utility-first CSS framework
-- **PostCSS** - CSS processing pipeline
+- **Vite 7.0.4** - Fast development server and build tool for modern web projects
+- **Tailwind CSS v4.1.11** - Modern utility-first CSS framework
+- **@tailwindcss/vite** - Official Vite plugin for Tailwind CSS v4
 
 ### Key Files & Their Purpose
 
@@ -105,6 +105,50 @@ src/
 └── js/
     └── app.js          # Creates dynamic elements
 ```
+
+## VexFlow v5.0.0 Breaking Changes
+
+### ⚠️ CRITICAL API CHANGES (v4.x → v5.0.0)
+
+#### Import Structure Change
+**v4.x and earlier:**
+```javascript
+import * as Vex from 'vexflow'
+const VF = Vex.Flow
+```
+
+**v5.0.0+:**
+```javascript
+import VexFlow from 'vexflow'
+const VF = VexFlow
+```
+
+#### Method API Changes
+**v4.x and earlier:**
+```javascript
+staveNotes[0].addAccidental(index, new VF.Accidental(acc))
+```
+
+**v5.0.0+:**
+```javascript
+staveNotes[0].addModifier(new VF.Accidental(acc), index)
+```
+
+#### Why These Changes Matter
+- **Import change**: VexFlow v5.0.0 restructured exports to use default export pattern
+- **Method change**: `addAccidental` method was replaced with more generic `addModifier` method
+- **Parameter order**: Note the parameter order change in `addModifier(modifier, index)`
+
+#### Migration Steps
+1. Update import statement to use default import
+2. Change VF initialization to use VexFlow directly
+3. Replace all `addAccidental` calls with `addModifier`
+4. Verify parameter order is correct
+
+#### Version Compatibility
+- **v1.2.93** → **v3.0.9** → **v4.2.5** → **v5.0.0**: Sequential upgrade path tested
+- Each version requires careful testing of music notation rendering
+- Font loading may differ between versions
 
 ## TonalJS Integration
 - Fixed import: `import { all, get } from '@tonaljs/chord-type'`

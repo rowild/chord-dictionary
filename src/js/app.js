@@ -9,7 +9,7 @@ import { all, get } from '@tonaljs/chord-type'
 import { Howler, howl } from 'howler'
 import { TweenMax, Power2 } from 'gsap'
 import debounce from 'lodash-es/debounce'
-import Vex from 'vexflow/src/index.js'
+import VexFlow from 'vexflow'
 
 // Important containers
 const startNoteSelector = document.getElementById('note-selector')
@@ -38,7 +38,7 @@ const sound = new Howl({
 })
 
 // VexFlow initialisation
-const VF = Vex.Flow
+const VF = VexFlow
 VF.Clef.DEBUG = true
 let renderer = undefined // will be defined in setupNotation()
 let context = undefined
@@ -147,8 +147,8 @@ const app = {
         //   chordIntervals = chordType(selectedChord).intervals
         // }
 
-        console.log('selectedChord =', selectedChord);
-        console.log('chord(selectedChord =', chord(selectedChord));
+        // console.log('selectedChord =', selectedChord);
+        // console.log('chord(selectedChord =', chord(selectedChord));
 
         let chordIntervals = chord(selectedChord).intervals
         chordResultElem.textContent = chordIntervals.join(' – ')
@@ -244,7 +244,7 @@ const app = {
         // Draw accidentals
         vexAccidentals.map((acc, index) => {
             if (acc === '') return
-            staveNotes[0].addAccidental(index, new VF.Accidental(acc))
+            staveNotes[0].addModifier(new VF.Accidental(acc), index)
         })
 
         // VexFlow helper function to format and build everything
