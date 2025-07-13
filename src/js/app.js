@@ -3,9 +3,7 @@
  * A javascript based tool to generate chords, using tonaljs and howler.
  * Based on the tutorial: https://www.youtube.com/watch?v=TUZe_Zxm0Ic&list=PLXAhCH9FJ8zWm17RdQFAkdsghd8aKU_dq
  */
-import { midi, transpose } from '@tonaljs/note'
-import { get as getChord } from '@tonaljs/chord'
-import { all as allChordTypes } from '@tonaljs/chord-type'
+import { Note, Chord, ChordType } from 'tonal'
 import { Howler, howl } from 'howler'
 import { TweenMax, Power2 } from 'gsap'
 import debounce from 'lodash-es/debounce'
@@ -102,7 +100,7 @@ const app = {
         })
     },
     setupChordBtns() {
-        const chordEntry = allChordTypes().map((entry, index) => {
+        const chordEntry = ChordType.all().map((entry, index) => {
             // 34 = dim, 38 = dim7, 96 = alt7 // fixed with version 3.4.4 or so...
             // if(index >= 34 && index <= 38 || index === 96) {
             //   console.log(index + '. entry =', entry);
@@ -150,12 +148,12 @@ const app = {
         // console.log('selectedChord =', selectedChord);
         // console.log('chord(selectedChord =', chord(selectedChord));
 
-        let chordIntervals = getChord(selectedChord).intervals
+        let chordIntervals = Chord.get(selectedChord).intervals
         chordResultElem.textContent = chordIntervals.join(' – ')
 
         const userCreatedRootNote = selectedStartNote + selectedOctave
         const transposedNotes = chordIntervals.map(val => {
-            return transpose(userCreatedRootNote, val)
+            return Note.transpose(userCreatedRootNote, val)
         })
         notesResultElem.textContent = transposedNotes.join(' – ');
 
@@ -329,7 +327,7 @@ const soundEngine = {
     playResult(soundSequence) {
         // Put all the MIDI nummbers in an array
         const soundSequenceMidiNumbers = soundSequence.map(noteName => {
-            return midi(noteName)
+            return Note.midi(noteName)
         })
 
         sound.fade(1, 0, 1000)
