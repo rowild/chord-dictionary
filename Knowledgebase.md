@@ -11,13 +11,11 @@
 
 **Why:** These styles are essential for buttons created dynamically by JavaScript via `createElem()` function. Without these styles, the app becomes completely unusable and unstyled.
 
-### 🚨 REQUIRED NODE.JS VERSION
-**Use Node.js v16.x** - The project has compatibility issues with newer versions (v22+) due to Babel/preset-env conflicts.
+### 🚨 COMPATIBLE NODE.JS VERSIONS
+**Use Node.js v16.x to v22.x** - All versions tested and working with Vite
 ```bash
-nvm use 16
+nvm use 16  # or 18, 20, 22
 ```
-
-## Project Architecture
 
 ## 🚀 Complete Modernization Summary
 
@@ -42,8 +40,10 @@ This project has undergone a comprehensive modernization to use the latest web d
 - **Tailwind v4**: Updated syntax and configuration
 - **Vite**: Restructured project layout and build configuration
 
+## Project Architecture
+
 ### Build System (Modern Stack)
-- **Vite 7.0.4** - Fast development server and build tool for modern web projects
+- **Vite v7.0.4** - Fast development server and build tool for modern web projects
 - **Tailwind CSS v4.1.11** - Modern utility-first CSS framework  
 - **@tailwindcss/vite** - Official Vite plugin for Tailwind CSS v4
 
@@ -51,19 +51,29 @@ This project has undergone a comprehensive modernization to use the latest web d
 - **VexFlow v5.0.0** - Latest music notation rendering library
 - **Tonal v6.4.2** - Modern music theory library (replaces @tonaljs)
 - **Howler v2.1.3** - Web audio library for sound playback
-- **GSAP v3.2.4** - Animation library for UI interactions
 - **Lodash-ES v4.17.15** - Utility functions (ES modules)
+
+### Vite Asset Handling
+
+#### Static Assets Import
+Assets in `src/assets/` must be imported as modules:
+```javascript
+import soundsUrl from '../assets/sounds.mp3'
+const sound = new Howl({ src: [soundsUrl] })
+```
+
+#### Public Assets
+Assets in `public/` can be referenced directly:
+```javascript
+// For files in public/sounds/
+const sound = new Howl({ src: ['/sounds/piano.mp3'] })
+```
 
 ### Key Files & Their Purpose
 
 #### `/src/css/tailwind.css`
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Custom utility for bg-header */
-.bg-header::before { ... }
+@import "tailwindcss";
 
 /* CRITICAL: Styles for dynamically created buttons */
 #note-selector button { ... }
@@ -73,30 +83,34 @@ This project has undergone a comprehensive modernization to use the latest web d
 **⚠️ NEVER remove the button styles - they're required for JS-created elements!**
 
 #### `/src/js/app.js`
+- Modern ES module imports: `import { Note, Chord, ChordType } from 'tonal'`
+- VexFlow v5 import: `import VexFlow from 'vexflow'`
+- Asset imports: `import soundsUrl from '../assets/sounds.mp3'`
 - Creates buttons dynamically via `createElem('button', value)`
-- Adds them to DOM containers: `#note-selector`, `#octave-selector`, `#chord-selector`
 - These buttons REQUIRE the CSS styles to function properly
 
-#### `/tailwind.config.js`
-- Contains safelist for classes used by dynamic elements
-- Includes custom colors (`black-20`) and aspect ratios
-- Content paths: `"./src/**/*.{html,js,ts,jsx,tsx}"`
+#### `/vite.config.js`
+- Vite configuration with Tailwind CSS v4 plugin
+- Handles asset processing and optimization
+- Configures development server settings
 
-#### `/.postcssrc.json`
-- PostCSS configuration in JSON format (preferred by Parcel 2)
-- Only includes Tailwind CSS (autoprefixer is built into Parcel)
+#### `/index.html` (Root location - Vite requirement)
+- Main entry point with ES module script tag
+- Updated for Vite project structure
 
-### Dependencies - Critical Versions
+### Dependencies - Modern Versions
 ```json
 {
   "dependencies": {
-    "@babel/preset-env": "^7.28.0",
-    "@tonaljs/modules": "^3.4.4",
-    "tailwindcss": "^3.4.17"
+    "@tailwindcss/vite": "^4.1.11",
+    "howler": "^2.1.3",
+    "lodash-es": "^4.17.15",
+    "tailwindcss": "^4.1.11",
+    "tonal": "^6.4.2",
+    "vexflow": "^5.0.0"
   },
   "devDependencies": {
-    "parcel": "^2.15.4",
-    "postcss": "^8.5.6"
+    "vite": "^7.0.4"
   }
 }
 ```
@@ -104,36 +118,59 @@ This project has undergone a comprehensive modernization to use the latest web d
 ## Development Workflow
 
 ### Setup Process
-1. Ensure Node.js v16.x: `nvm use 16`
+1. Use Node.js v16-22: `nvm use 16` (or 18, 20, 22)
 2. Install dependencies: `npm install`
-3. Start dev server: `npm run dev`
-4. Clear cache if issues: `rm -rf .parcel-cache dist`
+3. Start Vite dev server: `npm run dev`
+4. Access app at: `http://localhost:5173/`
+
+### Modern Development Commands
+```bash
+# Development server with instant HMR
+npm run dev
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
+```
 
 ### Known Issues & Solutions
 
 #### CSS Not Loading
 **Problem:** Tailwind classes not applying
 **Solution:** 
-1. Check safelist in `tailwind.config.js`
-2. Verify content paths include all source files
-3. Clear Parcel cache: `rm -rf .parcel-cache`
+1. Check that `src/css/tailwind.css` uses `@import "tailwindcss";`
+2. Verify Vite is running and assets are loading
+3. Restart dev server: `npm run dev`
 
 #### ES6 Module Errors
-**Problem:** Browser can't load modules
-**Solution:** Ensure `<script>` tag has `type="module"` in `src/index.html`
+**Problem:** Import/export errors
+**Solution:** 
+1. Ensure using modern imports: `import { Note } from 'tonal'`
+2. Check VexFlow import: `import VexFlow from 'vexflow'`
+3. Verify script tag has `type="module"` in `/index.html`
 
-#### Babel Version Conflicts
-**Problem:** "Invalid Version: undefined" error
-**Solution:** Use Node.js v16, not v22+
+#### Asset Import Errors
+**Problem:** Audio files not loading
+**Solution:** 
+1. Import assets from `src/assets/`: `import soundsUrl from '../assets/sounds.mp3'`
+2. Use public folder for direct references: `'/sounds/file.mp3'`
+3. Check file paths and extensions
 
-### File Structure Importance
+### File Structure (Modern Vite Layout)
 ```
-src/
-├── index.html          # Entry point, includes type="module"
-├── css/
-│   └── tailwind.css    # ⚠️ CRITICAL: Contains button styles
-└── js/
-    └── app.js          # Creates dynamic elements
+├── index.html              # Entry point (Vite requires root location)
+├── src/
+│   ├── css/
+│   │   └── tailwind.css    # ⚠️ CRITICAL: Contains button styles
+│   ├── js/
+│   │   └── app.js          # Modern imports and ES modules
+│   └── assets/
+│       └── sounds.mp3      # Must be imported as modules
+├── public/                 # Static assets (direct references)
+├── vite.config.js          # Vite configuration
+└── package.json            # Modern dependencies
 ```
 
 ## VexFlow v5.0.0 Breaking Changes
@@ -253,42 +290,42 @@ const midiNumber = Note.midi(noteName)
 - **Better TypeScript support**: Improved type definitions
 - **Active maintenance**: Current package with latest features
 
-## TonalJS Integration (Legacy v3.x)
-- Fixed import: `import { all, get } from '@tonaljs/chord-type'`
-- Uses `all()` instead of deprecated `entries()`
-- Version 3.4.4+ fixes dim, dim7, and alt7 chord issues
-
 ## Sound Integration
-- Howler.js for audio playback
-- VexFlow for music notation rendering
-- Custom sprite mapping for MIDI notes
+- **Howler.js v2.1.3** for audio playback with sprite mapping
+- **Custom MIDI mapping**: C1 (MIDI 24) to C8 with 3-second sprites
+- **Asset handling**: Import sounds.mp3 as Vite asset module
+- **Preloaded sprites**: Optimized for instant playback
 
 ## Common Maintenance Tasks
 
 ### Adding New Dynamic Button Styles
 1. Add styles to `src/css/tailwind.css` targeting specific IDs
-2. Use `@apply` directives for Tailwind classes
-3. Test with `npm run dev`
+2. Use Tailwind utility classes directly in CSS
+3. Test with `npm run dev` (instant HMR will show changes)
 
-### Updating Tailwind Classes
-1. Check if classes are in HTML (auto-detected)
-2. If used only in JS, add to safelist in `tailwind.config.js`
-3. Rebuild with cache clear
+### Updating Dependencies
+1. Check for updates: `npm outdated`
+2. Update specific package: `npm install package@latest`
+3. Test functionality after updates
+4. Update documentation if breaking changes
 
 ### Troubleshooting Build Issues
-1. Clear all caches: `rm -rf .parcel-cache dist node_modules/.cache`
-2. Verify Node version: `node --version` (should be v16.x)
-3. Check console for specific error messages
-4. Ensure all imports use correct module names
+1. Clear node_modules: `rm -rf node_modules package-lock.json`
+2. Reinstall: `npm install`
+3. Restart dev server: `npm run dev`
+4. Check console for specific error messages
+5. Ensure all imports use correct modern syntax
 
-## Performance Notes
-- Parcel handles code splitting automatically
-- CSS is processed and optimized
-- Only used Tailwind classes are included in final bundle
-- Custom CSS for dynamic elements is preserved
+## Performance Notes (Modern Stack)
+- **Vite's instant HMR**: Sub-second hot module replacement
+- **Tree-shaking**: Unused code automatically removed
+- **ES modules**: Better browser caching and loading
+- **Optimized builds**: Production builds are fully optimized
+- **Zero legacy dependencies**: No Babel, PostCSS configs, or build complexity
 
 ## Security Considerations
-- No secrets in repository
-- All dependencies are from npm
-- Audio files served statically
-- No server-side processing required
+- **Zero vulnerabilities**: Clean modern dependency tree
+- **No build tools vulnerabilities**: Eliminated legacy build system issues
+- **ES modules**: More secure than legacy bundling approaches
+- **Static assets**: All audio/images served as static files
+- **No server-side processing**: Pure client-side application

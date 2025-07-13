@@ -5,9 +5,9 @@
  */
 import { Note, Chord, ChordType } from 'tonal'
 import { Howler, howl } from 'howler'
-import { TweenMax, Power2 } from 'gsap'
 import debounce from 'lodash-es/debounce'
 import VexFlow from 'vexflow'
+import soundsUrl from '../assets/sounds.mp3'
 
 // Important containers
 const startNoteSelector = document.getElementById('note-selector')
@@ -25,13 +25,13 @@ const inputField = document.getElementById('filterChords')
 
 // Howler initialisation
 const sound = new Howl({
-    src: ['assets/sounds.mp3'],
+    src: [soundsUrl],
     onload() {
         console.log('sound file loaded');
         soundEngine.init()
     },
     onloaderror(error, msg) {
-        console.log('Error loading the sound file. Error:', error, '\nMessage:', msg);
+        console.error('Error loading the sound file. Error:', error, '\nMessage:', msg);
     }
 })
 
@@ -161,7 +161,7 @@ const app = {
         this.drawNotes(transposedNotes)
     },
     setupStave(clefDef = {}) {
-        console.log('clefDef =', clefDef);
+        // console.log('clefDef =', clefDef);
         renderer = new VF.Renderer(notatedResultElem, VF.Renderer.Backends.SVG)
         renderer.resize(280, 200) // 224 = w-56 (14rem) = 14*16
         context = renderer.getContext();

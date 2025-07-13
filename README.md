@@ -8,7 +8,7 @@
 - **Tonal v6.4.2** - Modern music theory library (replaces @tonaljs)
 - **VexFlow v5.0.0** - Latest music notation rendering library
 - **Howler.js v2.1.3** - Web audio library for sound playback
-- **GSAP v3.2.4** - Animation library for UI interactions
+- **Lodash-ES v4.17.15** - Utility functions (ES modules)
 
 ### Build System & Styling
 - **Vite v7.0.4** - Fast development server with instant HMR
