@@ -8,15 +8,14 @@
 - **Tonal v6.4.2** - Modern music theory library (replaces @tonaljs)
 - **VexFlow v5.0.0** - Latest music notation rendering library
 - **Howler.js v2.2.4** - Web audio library for sound playback
-- **GSAP v3.13.0** - Professional animation library for modal effects
 
 ### Build System & Styling
 - **Vite v7.0.4** - Fast development server with instant HMR
 - **Tailwind CSS v4.1.11** - Modern utility-first CSS framework
-- **ES Modules** - Full modern JavaScript module support
+- **GSAP v3.13.0** - Professional animation library
 
 ### Node.js Version
-**COMPATIBLE: Node.js v16.x to v22.x**
+**COMPATIBLE: Node.js v16.x (tested up to v22.x**)
 ```bash
 # Use Node Version Manager to switch to any compatible version
 nvm use 16  # or 18, 20, 22
