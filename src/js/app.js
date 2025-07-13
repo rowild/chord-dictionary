@@ -5,9 +5,17 @@
  */
 import { Note, Chord, ChordType } from 'tonal'
 import { Howler, howl } from 'howler'
-import debounce from 'lodash-es/debounce'
 import VexFlow from 'vexflow'
 import soundsUrl from '../assets/sounds.mp3'
+
+// Simple native debounce function
+const debounce = (callback, delay) => {
+    let timeoutId = null
+    return (...args) => {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(() => callback.apply(null, args), delay)
+    }
+}
 
 // Important containers
 const startNoteSelector = document.getElementById('note-selector')
@@ -274,15 +282,11 @@ const app = {
             const w = chordItems[i].offsetWidth
 
             if (txtValue.indexOf(filter) > -1) {
-                TweenMax.set(chordItems[i], {
-                    display: 'block'
-                })
+                chordItems[i].style.display = 'block'
             } else {
                 // If no chord is found, decrement the counter
                 counter--
-                TweenMax.set(chordItems[i], {
-                    display: 'none'
-                })
+                chordItems[i].style.display = 'none'
             }
         }
 

@@ -22,7 +22,6 @@
     "dependencies": {
         "@tailwindcss/vite": "^4.1.11",
         "howler": "^2.2.4",
-        "lodash-es": "^4.17.15",
         "tailwindcss": "^4.1.11",
         "tonal": "^6.4.2",
         "vexflow": "^5.0.0"
