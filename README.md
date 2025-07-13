@@ -1,4 +1,4 @@
-# Music Tools - Modern Music Theory Tools
+# Music Tools by rowild
 
 🎵 A modernized chord visualizer with playback functionality using the latest music libraries and modern web technologies. Features interactive chord selections with audio playback and musical notation display.
 
