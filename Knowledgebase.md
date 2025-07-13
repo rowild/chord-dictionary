@@ -50,8 +50,8 @@ This project has undergone a comprehensive modernization to use the latest web d
 ### Core Dependencies (Latest Versions)
 - **VexFlow v5.0.0** - Latest music notation rendering library
 - **Tonal v6.4.2** - Modern music theory library (replaces @tonaljs)
-- **Howler v2.1.3** - Web audio library for sound playback
-- **Lodash-ES v4.17.15** - Utility functions (ES modules)
+- **Howler v2.2.4** - Web audio library for sound playback
+- **GSAP v3.13.0** - Professional animation library for modal effects
 
 ### Vite Asset Handling
 
@@ -103,8 +103,8 @@ const sound = new Howl({ src: ['/sounds/piano.mp3'] })
 {
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
-    "howler": "^2.1.3",
-    "lodash-es": "^4.17.15",
+    "gsap": "^3.13.0",
+    "howler": "^2.2.4",
     "tailwindcss": "^4.1.11",
     "tonal": "^6.4.2",
     "vexflow": "^5.0.0"
@@ -291,10 +291,33 @@ const midiNumber = Note.midi(noteName)
 - **Active maintenance**: Current package with latest features
 
 ## Sound Integration
-- **Howler.js v2.1.3** for audio playback with sprite mapping
+- **Howler.js v2.2.4** for audio playback with sprite mapping
 - **Custom MIDI mapping**: C1 (MIDI 24) to C8 with 3-second sprites
 - **Asset handling**: Import sounds.mp3 as Vite asset module
 - **Preloaded sprites**: Optimized for instant playback
+
+## Modal System (v2.0.0)
+
+### Information & Acknowledgements Modals
+- **GSAP v3.13.0** powers smooth fade-in/scale animations
+- **Dual modal system**: Information explains app features, Acknowledgements credits libraries
+- **Multiple close methods**: X button, click outside, Escape key
+- **Responsive design**: Tailwind CSS with mobile-friendly layout
+
+### Modal Implementation
+```javascript
+// GSAP animation timeline for modal open
+const tl = gsap.timeline()
+tl.to(modal, { opacity: 1, duration: 0.3, ease: "power2.out" })
+  .fromTo(modalContent, { scale: 0.8, opacity: 0 }, { 
+    scale: 1, opacity: 1, duration: 0.3, ease: "back.out(1.7)" 
+  }, "-=0.1")
+```
+
+### Modal Features
+- **Information Modal**: Explains chord discovery, audio playback, registers, notation, and search
+- **Acknowledgements Modal**: Credits all open-source libraries with links
+- **Footer Integration**: Right-aligned copyright with modal trigger buttons
 
 ## Common Maintenance Tasks
 

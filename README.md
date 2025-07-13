@@ -1,4 +1,4 @@
-# Chord Player - Modern Music Theory Tools
+# Music Tools - Modern Music Theory Tools
 
 🎵 A modernized chord visualizer with playback functionality using the latest music libraries and modern web technologies. Features interactive chord selections with audio playback and musical notation display.
 
@@ -7,8 +7,8 @@
 ### Core Libraries (Latest Versions)
 - **Tonal v6.4.2** - Modern music theory library (replaces @tonaljs)
 - **VexFlow v5.0.0** - Latest music notation rendering library
-- **Howler.js v2.1.3** - Web audio library for sound playback
-- **Lodash-ES v4.17.15** - Utility functions (ES modules)
+- **Howler.js v2.2.4** - Web audio library for sound playback
+- **GSAP v3.13.0** - Professional animation library for modal effects
 
 ### Build System & Styling
 - **Vite v7.0.4** - Fast development server with instant HMR
@@ -120,6 +120,9 @@ npm run dev
 - **Audio Playback**: Real-time chord playback using Howler.js
 - **Music Notation**: VexFlow integration for standard notation display
 - **Chord Filtering**: Search and filter chord structures
+- **Information Modal**: Comprehensive app guide with feature explanations
+- **Acknowledgements Modal**: Credits all open-source libraries with links
+- **Smooth Animations**: GSAP-powered modal transitions and effects
 - **Responsive Design**: Tailwind CSS for modern responsive layout
 
 ## Technical Implementation (Modern Stack)
@@ -128,6 +131,7 @@ npm run dev
 - **Music Theory**: Tonal v6.4.2 with namespace imports
 - **Music Notation**: VexFlow v5.0.0 with latest API
 - **Audio**: Howler.js with custom sprite mapping for MIDI notes
+- **Animations**: GSAP v3.13.0 for smooth modal transitions
 - **Styling**: Tailwind CSS v4.1.11 with modern @import syntax
 - **Build**: Vite v7.0.4 with instant HMR and optimized production builds
 
@@ -140,11 +144,12 @@ npm run dev
 
 ## Performance Notes
 
-- **⚡ 78% smaller**: 134 packages vs 626 in legacy version
+- **⚡ 78% smaller**: 140 packages vs 626 in legacy version
 - **🔒 Zero vulnerabilities**: Clean modern dependency tree
 - **🚀 Instant HMR**: Vite's sub-second hot module replacement
 - **📦 Optimized builds**: Tree-shaking and code splitting
 - **🎯 Modern JS**: ES modules with better browser caching
+- **✨ Smooth animations**: GSAP optimized for 60fps performance
 
 For detailed development information and critical warnings, see `Knowledgebase.md`.
 

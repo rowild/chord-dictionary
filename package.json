@@ -1,6 +1,6 @@
 {
     "name": "chord_player",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "type": "module",
     "description": "A tool to generate chords uring tonaljs and howler.",
     "scripts": {
@@ -21,6 +21,7 @@
     "license": "ISC",
     "dependencies": {
         "@tailwindcss/vite": "^4.1.11",
+        "gsap": "^3.13.0",
         "howler": "^2.2.4",
         "tailwindcss": "^4.1.11",
         "tonal": "^6.4.2",

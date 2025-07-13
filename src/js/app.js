@@ -6,6 +6,7 @@
 import { Note, Chord, ChordType } from 'tonal'
 import { Howler, howl } from 'howler'
 import VexFlow from 'vexflow'
+import { gsap } from 'gsap'
 import soundsUrl from '../assets/sounds.mp3'
 
 // Simple native debounce function
@@ -343,3 +344,119 @@ const soundEngine = {
 }
 
 app.init()
+
+// Modal functionality
+const modal = {
+    init() {
+        // Acknowledgements modal
+        const ackModal = document.getElementById('acknowledgements-modal')
+        const ackOpenBtn = document.getElementById('acknowledgements-btn')
+        const ackCloseBtn = document.getElementById('close-modal')
+        
+        // Information modal
+        const infoModal = document.getElementById('information-modal')
+        const infoOpenBtn = document.getElementById('information-btn')
+        const infoCloseBtn = document.getElementById('close-info-modal')
+        
+        // Open acknowledgements modal
+        ackOpenBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.openModal('acknowledgements-modal')
+        })
+        
+        // Close acknowledgements modal
+        ackCloseBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.closeModal('acknowledgements-modal')
+        })
+        
+        // Open information modal
+        infoOpenBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.openModal('information-modal')
+        })
+        
+        // Close information modal
+        infoCloseBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.closeModal('information-modal')
+        })
+        
+        // Close modals when clicking outside
+        ackModal.addEventListener('click', (e) => {
+            if (e.target === ackModal) {
+                this.closeModal('acknowledgements-modal')
+            }
+        })
+        
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) {
+                this.closeModal('information-modal')
+            }
+        })
+        
+        // Close modals with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (ackModal.style.pointerEvents !== 'none') {
+                    this.closeModal('acknowledgements-modal')
+                }
+                if (infoModal.style.pointerEvents !== 'none') {
+                    this.closeModal('information-modal')
+                }
+            }
+        })
+    },
+    
+    openModal(modalId) {
+        const modal = document.getElementById(modalId)
+        const modalContent = modal.querySelector('.bg-white')
+        
+        // Enable interaction and start animation
+        modal.style.pointerEvents = 'auto'
+        
+        // GSAP animation timeline
+        const tl = gsap.timeline()
+        
+        tl.to(modal, {
+            opacity: 1,
+            duration: 0.3,
+            ease: "power2.out"
+        })
+        .fromTo(modalContent, {
+            scale: 0.8,
+            opacity: 0
+        }, {
+            scale: 1,
+            opacity: 1,
+            duration: 0.3,
+            ease: "back.out(1.7)"
+        }, "-=0.1")
+    },
+    
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId)
+        const modalContent = modal.querySelector('.bg-white')
+        
+        // GSAP animation timeline
+        const tl = gsap.timeline({
+            onComplete: () => {
+                modal.style.pointerEvents = 'none'
+            }
+        })
+        
+        tl.to(modalContent, {
+            scale: 0.8,
+            opacity: 0,
+            duration: 0.2,
+            ease: "power2.in"
+        })
+        .to(modal, {
+            opacity: 0,
+            duration: 0.2,
+            ease: "power2.in"
+        }, "-=0.1")
+    }
+}
+
+modal.init()
