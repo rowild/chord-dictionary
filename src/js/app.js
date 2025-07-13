@@ -5,7 +5,7 @@
  */
 import { note, transpose } from '@tonaljs/tonal'
 import { chord } from '@tonaljs/chord'
-import { entries, chordType } from '@tonaljs/chord-dictionary'
+import { all, get } from '@tonaljs/chord-type'
 import { Howler, howl } from 'howler'
 import { TweenMax, Power2 } from 'gsap'
 import debounce from 'lodash-es/debounce'
@@ -102,7 +102,7 @@ const app = {
         })
     },
     setupChordBtns() {
-        const chordEntry = entries().map((entry, index) => {
+        const chordEntry = all().map((entry, index) => {
             // 34 = dim, 38 = dim7, 96 = alt7 // fixed with version 3.4.4 or so...
             // if(index >= 34 && index <= 38 || index === 96) {
             //   console.log(index + '. entry =', entry);

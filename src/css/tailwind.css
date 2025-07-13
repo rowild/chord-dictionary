@@ -1,4 +1,17 @@
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom utility for bg-header */
+.bg-header::before {
+  content: "";
+  z-index: -1;
+  height: 220px;
+  width: 100%;
+  background: #000;
+  position: absolute;
+  top: 0;
+}
 
 #note-selector button,
 #octave-selector button {
@@ -24,7 +37,3 @@
   /* @apply bg-gray-200 text-black; */
   @apply bg-teal-400;
 }
-
-@tailwind components;
-
-@tailwind utilities;

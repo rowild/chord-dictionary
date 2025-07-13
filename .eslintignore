@@ -1,0 +1,10 @@
+/node_modules/**
+/build/**
+/dist/**
+/public/**
+/tests/bench/**
+/tests/fixtures/**
+/tests/performance/**
+/tmp/**
+.git/**
+!.eslintrc.js

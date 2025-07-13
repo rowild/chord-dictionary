@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chord Player</title>
     <link rel="stylesheet" href="css/tailwind.css">
-    <script src="js/app.js" defer></script>
+    <script src="js/app.js" type="module" defer></script>
 </head>
 
 <body class="font-sans leading-tight antialiased bg-gray-100">
@@ -19,6 +19,7 @@
                 <div class="flex items-center">
 
                     <a href="#" class="hover:text-gray-200 hover:bg-black-20">
+                        <p class="hidden">Avatar</p>
                         <svg class="block w-8 h-8 mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                             <path d="M20 2.5V0L6 2v12.17A3 3 0 0 0 5 14H3a3 3 0 0 0 0 6h2a3 3 0 0 0 3-3V5.71L18 4.3v7.88a3 3 0 0 0-1-.17h-2a3 3 0 0 0 0 6h2a3 3 0 0 0 3-3V2.5z" />
                         </svg>
@@ -33,7 +34,7 @@
                 </div>
 
                 <div class="flex-no-shrink">
-                    <img src="./assets/unnamed.jpg" alt="That's me!" class="rounded-full w-10 h-10 border-2 border-gray-500">
+                    <img src="assets/unnamed.jpg" alt="That's me!" class="rounded-full w-10 h-10 border-2 border-gray-500">
                 </div>
 
             </div>
@@ -102,7 +103,7 @@
             <div class="flex-1 mb-6">
                 <h2 class="text-xl font-semibold mb-2">Chord Structures</h2>
 
-                <input type="text" id="filterChords" placeholder="Search for a chord, e.g. 'sus', 'M', 'b5' ... (case sensitive)" class="rounded border border-gray-200 p-3 w-full mb-2" />
+                <input type="text" id="filterChords" placeholder="Search for a chord, e.g. 'sus', 'M', 'b5' ... (case sensitive)" aria-label="Search for chord" class="rounded border border-gray-200 p-3 w-full mb-2" />
                 <p id="found-items" class="mb-2 ml-5 w-full text-left text-gray-500">Found Items: </p>
 
                 <div class="bg-white rounded-md shadow mb-4">
