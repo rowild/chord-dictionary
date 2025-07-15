@@ -32,7 +32,17 @@ This is a modern music chord player application built with:
 ├── index.html              # Entry point (Vite requires root location)
 ├── src/
 │   ├── css/tailwind.css    # CRITICAL: Contains dynamic button styles
-│   ├── js/app.js          # Main application with modern ES imports
+│   ├── js/
+│   │   ├── app.js          # Main application coordinator
+│   │   ├── constants.js    # Shared constants (MIDI, rendering)
+│   │   ├── ui/
+│   │   │   └── modal.js    # Modal system with GSAP animations
+│   │   ├── utils/
+│   │   │   └── helpers.js  # Utility functions (debounce, createElem)
+│   │   ├── notation/
+│   │   │   └── notation.js # VexFlow music notation rendering
+│   │   └── sound/
+│   │       └── soundEngine.js # Howler.js audio playback system
 │   └── assets/sounds.mp3   # Audio sprites (imported as Vite module)
 ├── public/sounds/          # Individual audio files (direct references)
 ├── vite.config.js          # Vite configuration with Tailwind plugin
@@ -40,25 +50,40 @@ This is a modern music chord player application built with:
 
 ## Code Architecture
 
-### Core Application (`src/js/app.js`)
+### Modular ES6 Structure
 
-The application is organized into three main objects:
+The application now uses a clean modular architecture:
 
-1. **`app`** - Main application logic
+1. **`app.js`** - Main application coordinator
    - Manages note, octave, and chord selectors
-   - Handles UI creation via `createElem()` method
-   - Contains chord filtering functionality
-   - Orchestrates music notation rendering
+   - Handles UI state and event coordination
+   - Orchestrates between different modules
+   - Contains chord filtering and display logic
 
-2. **`soundEngine`** - Audio playback system
+2. **`constants.js`** - Shared constants and configuration
+   - `START_NOTES` - Musical note definitions with enharmonics
+   - `OCTAVES` - Range of octaves (0-7)
+   - `CONSTANTS` - MIDI and rendering configuration values
+
+3. **`ui/modal.js`** - Modal system with GSAP animations
+   - Information modal explaining app features
+   - Acknowledgements modal crediting libraries
+   - Error modal for user-friendly error display
+   - Smooth animations with scale/fade effects
+
+4. **`utils/helpers.js`** - Utility functions
+   - `debounce()` - Debounce with cancel method
+   - `createElem()` - DOM element creation helper
+
+5. **`notation/notation.js`** - VexFlow music notation
+   - `setupStave()` - Initialize musical staff
+   - `drawNotes()` - Render notes on staff
+   - `determineClef()` - Automatic clef selection
+
+6. **`sound/soundEngine.js`** - Audio playback system
    - Initializes Howler.js with MIDI sprite mapping (C1-C8, MIDI 24-108)
    - Maps 3-second audio sprites to MIDI numbers
    - Handles chord playback with fade effects
-
-3. **`modal`** - GSAP-powered modal system
-   - Information modal explaining app features
-   - Acknowledgements modal crediting libraries
-   - Smooth animations with scale/fade effects
 
 ### Music Theory Integration
 

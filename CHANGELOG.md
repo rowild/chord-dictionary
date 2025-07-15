@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.4] - 2025-07-15
+
+### Refactored
+- **Modular Architecture**: Complete code restructuring with ES6 modules
+  - Extracted constants into `src/js/constants.js` for better maintainability
+  - Created `src/js/utils/helpers.js` for reusable utility functions (`debounce`, `createElem`)
+  - Separated UI modal logic into `src/js/ui/modal.js`
+  - Moved music notation rendering to `src/js/notation/notation.js`
+  - Isolated sound engine functionality in `src/js/sound/soundEngine.js`
+  - Main `app.js` now focuses on core application logic and coordination
+
+### Improved
+- **CSS Organization**: Enhanced Tailwind CSS utility classes with multi-line formatting
+  - Better readability with grouped utility classes
+  - Improved maintenance with consistent formatting patterns
+  - Added specific hiding classes for button selectors
+- **HTML Element IDs**: Updated to use kebab-case for consistency
+  - Changed `filterChords` to `filter-chords` for better naming conventions
+  - Improved accessibility with semantic ID naming
+- **Code Quality**: Enhanced function organization and documentation
+  - Better separation of concerns between modules
+  - Improved error handling with centralized modal system
+  - More maintainable codebase with clear module boundaries
+- **Button Class System**: Added specific CSS classes for button selectors
+  - `.note-selector-btn`, `.octave-selector-btn`, `.chord-selector-btn`
+  - Better styling control and maintainability
+
+### Fixed
+- **Constants Duplication**: Removed duplicate constant definitions
+  - Consolidated MIDI and rendering constants in single location
+  - Eliminated redundant variable declarations
+- **Import Organization**: Cleaner ES6 module imports
+  - Reduced main file complexity with focused imports
+  - Better dependency management across modules
+
 ## [2.0.3] - 2025-07-15
 
 ### Added

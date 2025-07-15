@@ -14,7 +14,12 @@
 #note-selector button,
 #octave-selector button {
   /* @apply w-24 shadow font-semibold text-gray-700 text-sm border border-gray-200 p-2 mr-4 mb-4 rounded bg-gray-100; */
-  @apply inline-block relative w-8 h-8 bg-teal-500 rounded text-white border-transparent p-1 mb-2 mr-2 outline-none;
+  @apply inline-block relative;
+  @apply w-8 h-8;
+  @apply p-1 mb-2 mr-2;
+  @apply text-white bg-teal-500;
+  @apply rounded border-transparent;
+  @apply outline-none;
   transition: all .35ms
 }
 
@@ -24,7 +29,12 @@
 
 #chord-selector button {
   /* @apply w-24 shadow font-semibold text-gray-700 text-sm border border-gray-200 p-2 mr-4 mb-4 rounded bg-gray-100; */
-  @apply w-24 bg-teal-500 rounded text-white inline-block relative border-transparent p-3 mb-2 mr-2 outline-none;
+  @apply inline-block relative;
+  @apply w-24;
+  @apply p-3 mb-2 mr-2;
+  @apply bg-teal-500 text-white;
+  @apply rounded border-transparent;
+  @apply outline-none;
   transition: all .35ms
 }
 
@@ -34,4 +44,10 @@
 #chord-selector button:hover {
   /* @apply bg-gray-200 text-black; */
   @apply bg-teal-400;
+}
+
+#note-selector button.hidden,
+#octave-selector button.hidden,
+#chord-selector button.hidden {
+  display: none !important;
 }
