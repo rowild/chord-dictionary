@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2025-07-15
+
+### Improved
+- **Code Architecture**: Extracted clef selection logic into `determineClef()` helper function
+  - Improved code clarity and maintainability in `drawNotes()` function
+  - Enhanced testability of clef selection logic
+- **State Management**: Encapsulated global state within `app.state` object
+  - Moved `selectedStartNote`, `selectedOctave`, `selectedChord` into `app.state`
+  - Better organization and namespace management
+- **Event Handling**: Improved event delegation with `e.target.matches('button')`
+  - More robust than previous `tagName === 'DIV'` approach
+  - Better accessibility and semantic targeting
+- **Modal System**: Refactored modal setup to eliminate code duplication
+  - Configuration-driven approach for easier maintenance
+  - Generic `setupModal()` function handles all modal types
+- **DOM Performance**: Implemented DOM element caching in `filterChords()`
+  - Eliminates repeated DOM queries during filtering
+  - Better performance for real-time search functionality
+
+### Added
+- Comprehensive error handling throughout the application
+  - Chord validation in `displayChordInfo()`
+  - Note format validation in `drawNotes()` and `determineClef()`
+  - Audio playback error handling in `playResult()`
+  - User-friendly error messages in UI
+- Enhanced CLAUDE.md documentation
+  - Added "NEVER DELETE CODE" guidelines
+  - Added "DISTINGUISH BETWEEN SUGGESTIONS AND IMPLEMENTATION" guidelines
+  - Better development workflow documentation
+
+### Documentation
+- Added detailed JSDoc comments to all functions
+- Preserved unused variables with explanatory comments
+- Documented audio fade logic reasoning
+- Enhanced code maintainability with clear commenting
+
 ## [2.0.1] - 2025-07-15
 
 ### Fixed

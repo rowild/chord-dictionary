@@ -41,6 +41,11 @@ const sound = new Howl({
     },
     onloaderror(error, msg) {
         console.error('Error loading the sound file. Error:', error, '\nMessage:', msg);
+        // Error handling: Show user-friendly message when audio fails to load
+        const audioErrorMsg = document.createElement('div')
+        audioErrorMsg.className = 'bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded text-sm'
+        audioErrorMsg.innerHTML = '⚠️ Audio unavailable - chord visualization will work without sound'
+        document.body.insertBefore(audioErrorMsg, document.body.firstChild)
     }
 })
 
@@ -67,22 +72,39 @@ const startNotes = [
     ['B', 'Cb']
 ]
 
-// Once the eventlisteners are hooked up, we need some vars to save the values to
-let selectedStartNote = 'C'
-let selectedOctave = '1'
-let selectedChord = null
+// Global state variables moved to app object for better encapsulation
 
 // ES6 Array methods:
 // @see https://www.freecodecamp.org/news/https-medium-com-gladchinda-hacks-for-creating-javascript-arrays-a1b80cb372b/
 const octaves = Array.from(new Array(8), (x, index) => index)
 
 const app = {
+    // Cache DOM elements at startup for better performance
+    elements: {
+        filterInput: null,
+        chordItems: null,
+        foundItems: null
+    },
+
+    // Application state - encapsulated within app object
+    state: {
+        selectedStartNote: 'C',
+        selectedOctave: '1',
+        selectedChord: null
+    },
+    /**
+     * Updates the displayed chosen root note and chord.
+     */
     updateChosenRootNoteElem() {
-        chosenRootNoteElem.textContent = selectedStartNote + selectedOctave
-        if (selectedChord !== null) {
-            chosenChordElem.textContent = selectedChord
+        chosenRootNoteElem.textContent = this.state.selectedStartNote + this.state.selectedOctave
+        if (this.state.selectedChord !== null) {
+            chosenChordElem.textContent = this.state.selectedChord
         }
     },
+    /**
+     * Clears the chord and note selectors.
+     * Note: This function is currently unused but may be needed for future functionality.
+     */
     setupStartNotes() {
         // create buttons and add them to their respective container
         startNotes.forEach(note => {
@@ -101,6 +123,10 @@ const app = {
             }
         })
     },
+    /**
+     * Creates buttons for each octave and adds them to the octave selector.
+     * Note: Octaves are represented as numbers from 0 to 7.
+     */
     setupOctaves() {
         // create buttons and add them to their respective containers
         octaves.forEach(index => {
@@ -108,6 +134,10 @@ const app = {
             octaveSelector.append(octaveOption)
         })
     },
+    /**
+     * Creates buttons for each chord type and adds them to the chord selector.
+     * Note: ChordType.all() returns an array of all chord types available in tonaljs.
+     */
     setupChordBtns() {
         const chordEntry = ChordType.all().map((entry, index) => {
             // 34 = dim, 38 = dim7, 96 = alt7 // fixed with version 3.4.4 or so...
@@ -117,62 +147,100 @@ const app = {
             const chordBtn = this.createElem('button', entry.aliases[0])
             chordSelector.append(chordBtn)
         })
+        // Note: chordEntry variable preserved for potential future use (e.g., debugging, chord metadata)
+        // Currently unused but may be needed for chord type analysis or logging
     },
+    /**
+     * Sets up event listeners for the start note, octave, chord selectors, and input field.
+     * Note: This function is responsible for handling user interactions and updating the UI accordingly.
+     */
     setupEventListeners() {
+        // Event delegation with proper button targeting - more robust than tagName checking
         startNoteSelector.addEventListener('click', (e) => {
-            if (e.target.tagName === 'DIV') return
-            selectedStartNote = e.target.textContent
+            if (!e.target.matches('button')) return
+            this.state.selectedStartNote = e.target.textContent
             this.updateChosenRootNoteElem()
         })
         octaveSelector.addEventListener('click', (e) => {
-            if (e.target.tagName === 'DIV') return
-            selectedOctave = e.target.textContent
+            if (!e.target.matches('button')) return
+            this.state.selectedOctave = e.target.textContent
             this.updateChosenRootNoteElem()
         })
         chordSelector.addEventListener('click', (e) => {
-            // If we do not click on one of the enclosed buttons, but on the parent DIV, exit
-            if (e.target.tagName === 'DIV') return
-            selectedChord = e.target.textContent
+            // Event delegation: only respond to button clicks, ignore container clicks
+            if (!e.target.matches('button')) return
+            this.state.selectedChord = e.target.textContent
             this.updateChosenRootNoteElem()
             this.displayChordInfo()
         })
         inputField.addEventListener('keyup', debounce(this.filterChords, 500))
     },
+    /**
+     * Displays the chord information based on the selected root note, octave, and chord type.
+     * It transposes the chord intervals to the selected root note and octave, plays the sound,
+     * and draws the musical notation using VexFlow.
+     * Note: This function handles chord validation and error handling for invalid chords.
+     */
     displayChordInfo() {
         // Workaround pre tonaljs 3.4.4, when dim, dim7 and add7 were broken
-        // if(selectedChord === 'dim' || selectedChord === 'dim7') {
-        //   selectedChord = '°7'
+        // if(this.state.selectedChord === 'dim' || this.state.selectedChord === 'dim7') {
+        //   this.state.selectedChord = '°7'
         // }
 
         // "alt7" causes troubles. This might affect more than just "alt7" chord,
         // since it is a check agains "emptry === true", which is the case with
         // various chords
         // let chordIntervals = null;
-        // if(chord(selectedChord).empty !== true) {
-        //   chordIntervals = chord(selectedChord).intervals
+        // if(chord(this.state.selectedChord).empty !== true) {
+        //   chordIntervals = chord(this.state.selectedChord).intervals
         // } else {
-        //   chordIntervals = chordType(selectedChord).intervals
+        //   chordIntervals = chordType(this.state.selectedChord).intervals
         // }
 
-        // console.log('selectedChord =', selectedChord);
-        // console.log('chord(selectedChord =', chord(selectedChord));
+        // console.log('selectedChord =', this.state.selectedChord);
+        // console.log('chord(selectedChord =', chord(this.state.selectedChord));
 
-        let chordIntervals = Chord.get(selectedChord).intervals
-        chordResultElem.textContent = chordIntervals.join(' – ')
+        try {
+            let chordIntervals = Chord.get(this.state.selectedChord).intervals
 
-        const userCreatedRootNote = selectedStartNote + selectedOctave
-        const transposedNotes = chordIntervals.map(val => {
-            return Note.transpose(userCreatedRootNote, val)
-        })
-        notesResultElem.textContent = transposedNotes.join(' – ');
+            // Error handling: Check if chord is valid (has intervals)
+            if (!chordIntervals || chordIntervals.length === 0) {
+                throw new Error(`Invalid or unrecognized chord: ${this.state.selectedChord}`)
+            }
 
-        soundEngine.playResult(transposedNotes)
-        this.drawNotes(transposedNotes)
+            chordResultElem.textContent = chordIntervals.join(' – ')
+
+            const userCreatedRootNote = this.state.selectedStartNote + this.state.selectedOctave
+            const transposedNotes = chordIntervals.map(val => {
+                const transposed = Note.transpose(userCreatedRootNote, val)
+                // Error handling: Check if note transposition was successful
+                if (!transposed) {
+                    throw new Error(`Failed to transpose note: ${userCreatedRootNote} + ${val}`)
+                }
+                return transposed
+            })
+            notesResultElem.textContent = transposedNotes.join(' – ');
+
+            soundEngine.playResult(transposedNotes)
+            this.drawNotes(transposedNotes)
+
+        } catch (error) {
+            console.error('Error displaying chord info:', error)
+            // Display user-friendly error message
+            chordResultElem.textContent = 'Error: Unable to process chord'
+            notesResultElem.textContent = 'Please try a different chord'
+            // Don't attempt to play sound or draw notes if chord is invalid
+        }
     },
+    /**
+     * Sets up the VexFlow stave for musical notation rendering.
+     * It initializes the renderer, context, and stave, and adds the clef based on the provided clef definition.
+     * Note: This function handles default clef definitions and can be customized with specific clef parameters.
+     */
     setupStave(clefDef = {}) {
         // console.log('clefDef =', clefDef);
         renderer = new VF.Renderer(notatedResultElem, VF.Renderer.Backends.SVG)
-        renderer.resize(280, 200) // 224 = w-56 (14rem) = 14*16
+        renderer.resize(280, 240) // 224 = w-56 (14rem) = 14*16
         context = renderer.getContext();
         stave = new VF.Stave(10, 20, 240)
         // stave.addClef(type, size, annotation)
@@ -189,15 +257,26 @@ const app = {
         // .addTimeSignature('4/4')
         stave.setContext(context).draw()
     },
-    drawNotes(notes) {
-        // Calculate clef
+    /**
+     * Determines the appropriate clef configuration based on note range
+     * @param {Array} notes - Array of note strings (e.g., ['C4', 'E4', 'G4'])
+     * @returns {Object} - Clef configuration {clefType, clefSize, clefAnnotation}
+     */
+    determineClef(notes) {
+        // Extract octave numbers from first and last notes
         let lowestNoteInChord = parseInt(notes[0].slice(-1))
         let highestNoteInChord = parseInt(notes[notes.length - 1].slice(-1))
+
+        // Error handling: Validate note format
+        if (isNaN(lowestNoteInChord) || isNaN(highestNoteInChord)) {
+            throw new Error('Invalid note format - unable to determine octave')
+        }
 
         let clefType = 'treble'
         let clefSize = 'default' // "default" or "small"
         let clefAnnotation = undefined // ottava symbol
 
+        // Clef selection logic based on note range
         if (lowestNoteInChord > 5 || highestNoteInChord > 6) {
             clefAnnotation = '8va'
         } else if (highestNoteInChord >= 2 && highestNoteInChord < 4) {
@@ -207,98 +286,150 @@ const app = {
             clefAnnotation = '8vb'
         }
 
-        // ES6 notation! ( ... clefType: clefType ...)
-        const clefDef = { clefType, clefSize, clefAnnotation }
-
-        // Re-draw the canvas
-        if (context.svg.childNodes) {
-            notatedResultElem.removeChild(context.svg)
-            this.setupStave(clefDef)
-        }
-
-        // "Collect" accidentals
-        let vexAccidentals = []
-
-        // "Collect" VexFlow-readable notes, transposed, if clef has annotation
-        let vexNotes = notes.map(n => {
-            let note = n.slice(0, -1).toLowerCase()
-            let register = n.slice(-1)
-
-            // Transpose notes, if the clef received an annotation
-            if (clefAnnotation === '8vb') {
-                register = parseInt(register) + 1
-            }
-            if (clefAnnotation === '8va') {
-                register = parseInt(register) - 1
-            }
-
-            // Check, if there are accidentals
-            vexAccidentals.push(note.slice(1, note.length))
-
-            // Build the not in form of "c/4"
-            return note + '/' + register.toString()
-        })
-
-        // Draw notes
-        let staveNotes = [
-            new VF.StaveNote({
-                clef: clefType,
-                keys: vexNotes,
-                duration: "w"
-            })
-        ]
-
-        // Draw accidentals
-        vexAccidentals.map((acc, index) => {
-            if (acc === '') return
-            staveNotes[0].addModifier(new VF.Accidental(acc), index)
-        })
-
-        // VexFlow helper function to format and build everything
-        VF.Formatter.FormatAndDraw(context, stave, staveNotes)
+        return { clefType, clefSize, clefAnnotation }
     },
+
+    /**
+     * Draws musical notation for the given notes using VexFlow.
+     * It calculates the clef based on the lowest and highest notes, collects accidentals,
+     * and formats the notes for VexFlow rendering.
+     * Note: This function handles errors related to note format and clef calculation.
+     */
+    drawNotes(notes) {
+        try {
+            // Error handling: Validate input notes
+            if (!notes || notes.length === 0) {
+                throw new Error('No notes provided for notation')
+            }
+
+            // Use helper function to determine clef configuration
+            const clefDef = this.determineClef(notes)
+
+            // Re-draw the canvas
+            if (context && context.svg && context.svg.childNodes) {
+                notatedResultElem.removeChild(context.svg)
+                this.setupStave(clefDef)
+            }
+
+            // "Collect" accidentals
+            let vexAccidentals = []
+
+            // "Collect" VexFlow-readable notes, transposed, if clef has annotation
+            let vexNotes = notes.map(n => {
+                if (!n || typeof n !== 'string') {
+                    throw new Error(`Invalid note format: ${n}`)
+                }
+
+                let note = n.slice(0, -1).toLowerCase()
+                let register = n.slice(-1)
+
+                // Error handling: Validate note components
+                if (!note || !register) {
+                    throw new Error(`Unable to parse note: ${n}`)
+                }
+
+                // Transpose notes, if the clef received an annotation
+                if (clefDef.clefAnnotation === '8vb') {
+                    register = parseInt(register) + 1
+                }
+                if (clefDef.clefAnnotation === '8va') {
+                    register = parseInt(register) - 1
+                }
+
+                // Check, if there are accidentals
+                vexAccidentals.push(note.slice(1, note.length))
+
+                // Build the not in form of "c/4"
+                return note + '/' + register.toString()
+            })
+
+            // Draw notes
+            let staveNotes = [
+                new VF.StaveNote({
+                    clef: clefDef.clefType,
+                    keys: vexNotes,
+                    duration: "w"
+                })
+            ]
+
+            // Draw accidentals
+            vexAccidentals.map((acc, index) => {
+                if (acc === '') return
+                staveNotes[0].addModifier(new VF.Accidental(acc), index)
+            })
+
+            // VexFlow helper function to format and build everything
+            VF.Formatter.FormatAndDraw(context, stave, staveNotes)
+        }
+        catch (error) {
+            console.error('Error drawing musical notation:', error)
+            // Clear the notation area and show error message
+            if (notatedResultElem) {
+                notatedResultElem.innerHTML = '<div class="p-4 text-red-600 text-sm">Unable to display notation</div>'
+            }
+        }
+    },
+    /**
+   * Creates a DOM element of the specified type with the given text value.
+     */
     createElem(elemType, val) {
         const elem = document.createElement(elemType)
         elem.innerText = val
         return elem
     },
+    /**
+     * Filters the chord items based on the input value.
+     * It hides items that do not match the search query and updates the counter of found items.
+     * Note: This function uses cached DOM elements for better performance and handles case-sensitive filtering.
+     */
     filterChords(e) {
         // Declare variables
         let i = 0
         let counter = 0
 
-        let input = document.getElementById('filterChords')
-        let filter = input.value // case sensitive!
-
-        let chordItems = document.querySelectorAll('#chord-selector button')
-        let foundItems = document.getElementById('found-items')
+        // Use cached DOM elements for better performance
+        let filter = this.elements.filterInput.value // case sensitive!
 
         // Loop through all items and hide those that don't match the search query
-        for (i = 0; i < chordItems.length; i++) {
+        for (i = 0; i < this.elements.chordItems.length; i++) {
             counter++
 
-            const txtValue = chordItems[i].textContent
-            const itemStyles = chordItems[i].currentStyle || window.getComputedStyle(chordItems[i])
-            const h = chordItems[i].offsetHeight
-            const w = chordItems[i].offsetWidth
+            const txtValue = this.elements.chordItems[i].textContent
+            // Note: Style calculations preserved for potential future use (responsive design, animations)
+            // Currently unused but may be needed for layout calculations or visual effects
+            // const itemStyles = this.elements.chordItems[i].currentStyle || window.getComputedStyle(this.elements.chordItems[i])
+            // const h = this.elements.chordItems[i].offsetHeight
+            // const w = this.elements.chordItems[i].offsetWidth
 
             if (txtValue.indexOf(filter) > -1) {
-                chordItems[i].style.display = 'block'
+                this.elements.chordItems[i].style.display = 'block'
             } else {
                 // If no chord is found, decrement the counter
                 counter--
-                chordItems[i].style.display = 'none'
+                this.elements.chordItems[i].style.display = 'none'
             }
         }
 
         // Display the counter result
-        foundItems.textContent = 'Found ' + counter + ' chords.'
+        this.elements.foundItems.textContent = 'Found ' + counter + ' chords.'
+
+        // Note: Event parameter 'e' preserved for potential future use (accessing event properties)
+        // Currently unused but may be needed for keyboard event handling or event delegation
     },
+
     init() {
+        // Cache DOM elements once during initialization for better performance
+        this.elements.filterInput = document.getElementById('filterChords')
+        this.elements.foundItems = document.getElementById('found-items')
+
         // this.clearSelectors()
         this.setupStartNotes()
         this.setupOctaves()
         this.setupChordBtns()
+
+        // Cache chord buttons AFTER they're created by setupChordBtns()
+        this.elements.chordItems = document.querySelectorAll('#chord-selector button')
+
         this.setupEventListeners()
         this.setupStave()
     }
@@ -330,16 +461,47 @@ const soundEngine = {
         // sound.play('60');
     },
     playResult(soundSequence) {
-        // Put all the MIDI nummbers in an array
-        const soundSequenceMidiNumbers = soundSequence.map(noteName => {
-            return Note.midi(noteName)
-        })
+        try {
+            // Error handling: Validate input
+            if (!soundSequence || soundSequence.length === 0) {
+                console.warn('No notes provided for audio playback')
+                return
+            }
 
-        sound.fade(1, 0, 1000)
-        sound.volume(0.2)
-        soundSequenceMidiNumbers.forEach(noteMidiNumber => {
-            sound.play(noteMidiNumber.toString())
-        })
+            // Put all the MIDI nummbers in an array
+            const soundSequenceMidiNumbers = soundSequence.map(noteName => {
+                const midiNumber = Note.midi(noteName)
+                // Error handling: Check if MIDI conversion was successful
+                if (midiNumber === null || midiNumber === undefined) {
+                    throw new Error(`Unable to convert note to MIDI: ${noteName}`)
+                }
+                return midiNumber
+            })
+
+            // Error handling: Check if sound is loaded before playing
+            if (!sound || sound.state() !== 'loaded') {
+                console.warn('Audio not ready for playback')
+                return
+            }
+
+            // Fade out any currently playing sounds to avoid harsh audio cutoff
+            // This provides a smooth transition when switching between chords
+            // The fade prevents jarring audio artifacts that would occur with sound.stop()
+            sound.fade(1, 0, 1000)
+            sound.volume(0.2)
+            soundSequenceMidiNumbers.forEach(noteMidiNumber => {
+                // Error handling: Validate MIDI number is in range
+                if (noteMidiNumber < 24 || noteMidiNumber > 108) {
+                    console.warn(`MIDI note ${noteMidiNumber} out of range (24-108), skipping`)
+                    return
+                }
+                sound.play(noteMidiNumber.toString())
+            })
+
+        } catch (error) {
+            console.error('Error playing audio:', error)
+            // Silently fail for audio - don't interrupt user experience
+        }
     }
 }
 
@@ -348,76 +510,80 @@ app.init()
 // Modal functionality
 const modal = {
     init() {
-        // Acknowledgements modal
-        const ackModal = document.getElementById('acknowledgements-modal')
-        const ackOpenBtn = document.getElementById('acknowledgements-btn')
-        const ackCloseBtn = document.getElementById('close-modal')
-        
-        // Information modal
-        const infoModal = document.getElementById('information-modal')
-        const infoOpenBtn = document.getElementById('information-btn')
-        const infoCloseBtn = document.getElementById('close-info-modal')
-        
-        // Open acknowledgements modal
-        ackOpenBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-            this.openModal('acknowledgements-modal')
-        })
-        
-        // Close acknowledgements modal
-        ackCloseBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-            this.closeModal('acknowledgements-modal')
-        })
-        
-        // Open information modal
-        infoOpenBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-            this.openModal('information-modal')
-        })
-        
-        // Close information modal
-        infoCloseBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-            this.closeModal('information-modal')
-        })
-        
-        // Close modals when clicking outside
-        ackModal.addEventListener('click', (e) => {
-            if (e.target === ackModal) {
-                this.closeModal('acknowledgements-modal')
+        // Modal configuration - eliminates code duplication
+        const modalConfigs = [
+            {
+                modalId: 'acknowledgements-modal',
+                openBtnId: 'acknowledgements-btn',
+                closeBtnId: 'close-modal'
+            },
+            {
+                modalId: 'information-modal',
+                openBtnId: 'information-btn',
+                closeBtnId: 'close-info-modal'
             }
+        ]
+
+        // Setup each modal using configuration
+        modalConfigs.forEach(config => {
+            this.setupModal(config)
         })
-        
-        infoModal.addEventListener('click', (e) => {
-            if (e.target === infoModal) {
-                this.closeModal('information-modal')
-            }
-        })
-        
-        // Close modals with Escape key
+
+        // Global escape key handler for all modals
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (ackModal.style.pointerEvents !== 'none') {
-                    this.closeModal('acknowledgements-modal')
-                }
-                if (infoModal.style.pointerEvents !== 'none') {
-                    this.closeModal('information-modal')
-                }
+                modalConfigs.forEach(config => {
+                    const modal = document.getElementById(config.modalId)
+                    if (modal && modal.style.pointerEvents !== 'none') {
+                        this.closeModal(config.modalId)
+                    }
+                })
             }
         })
     },
-    
+
+    // Generic modal setup function - eliminates duplication
+    setupModal(config) {
+        const modal = document.getElementById(config.modalId)
+        const openBtn = document.getElementById(config.openBtnId)
+        const closeBtn = document.getElementById(config.closeBtnId)
+
+        // Error handling: Check if elements exist
+        if (!modal || !openBtn || !closeBtn) {
+            console.warn(`Modal setup failed - missing elements for ${config.modalId}`)
+            return
+        }
+
+        // Open modal event
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.openModal(config.modalId)
+        })
+
+        // Close modal event
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.closeModal(config.modalId)
+        })
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeModal(config.modalId)
+            }
+        })
+    },
+
     openModal(modalId) {
         const modal = document.getElementById(modalId)
         const modalContent = modal.querySelector('.bg-white')
-        
+
         // Enable interaction and start animation
         modal.style.pointerEvents = 'auto'
-        
+
         // GSAP animation timeline
         const tl = gsap.timeline()
-        
+
         tl.to(modal, {
             opacity: 1,
             duration: 0.3,
@@ -433,18 +599,18 @@ const modal = {
             ease: "back.out(1.7)"
         }, "-=0.1")
     },
-    
+
     closeModal(modalId) {
         const modal = document.getElementById(modalId)
         const modalContent = modal.querySelector('.bg-white')
-        
+
         // GSAP animation timeline
         const tl = gsap.timeline({
             onComplete: () => {
                 modal.style.pointerEvents = 'none'
             }
         })
-        
+
         tl.to(modalContent, {
             scale: 0.8,
             opacity: 0,

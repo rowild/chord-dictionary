@@ -88,6 +88,33 @@ staveNotes[0].addModifier(new VF.Accidental(acc), index)
 
 ## CRITICAL Development Notes
 
+### ⚠️ NEVER DELETE CODE WITHOUT PERMISSION
+
+**IMPORTANT:** Never remove, delete, or comment out existing code without explicit user permission, even if:
+- Variables appear unused (they may be needed for future features)
+- Code seems redundant (it may serve a purpose not immediately obvious)
+- Linting tools flag it as "unused" (user may have plans for it)
+- It appears to be "dead code" (it may be temporarily disabled)
+
+**Always ask first** before removing any code. If optimization is needed, suggest improvements but preserve the original code until explicitly told to remove it.
+
+### ⚠️ DISTINGUISH BETWEEN SUGGESTIONS AND IMPLEMENTATION
+
+**CRITICAL:** When user asks for "suggestions", "recommendations", "thoughts", or "what would you do":
+- **DO NOT implement or change any code**
+- **DO NOT use Edit, Write, or MultiEdit tools**
+- **ONLY provide analysis and suggested solutions in text**
+- **Wait for explicit permission** ("please implement", "do it", "make the change")
+
+**Examples:**
+- ❌ "Your thoughts on this code?" → *immediately implements changes*
+- ✅ "Your thoughts on this code?" → *provides analysis and suggests improvements in text*
+- ❌ "How would you improve this?" → *makes code changes*
+- ✅ "How would you improve this?" → *explains potential improvements, awaits permission*
+
+**Key Words That Mean "Don't Change Code Yet":**
+- "suggest", "recommend", "thoughts", "what would you do", "how would you improve", "any ideas"
+
 ### ⚠️ DO NOT MODIFY Dynamic Button CSS
 
 The styles in `src/css/tailwind.css` for these selectors are ESSENTIAL:
