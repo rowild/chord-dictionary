@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2025-07-15
+
+### Added
+- **Error Modal System**: Implemented comprehensive error modal with red background
+  - User-friendly error messages instead of console-only logging
+  - Collapsible technical details section for debugging
+  - GSAP animations consistent with existing modal system
+  - Multiple close options (X button, OK button, click outside, escape key)
+  - Integrated with chord processing, notation display, and audio playback errors
+- **Global Modal Access**: Made modal globally accessible via `window.modal` for testing
+
+### Improved
+- **Robust Octave Parsing**: Replaced fragile string slicing with Tonal's `Note.octave()`
+  - Handles double-digit octaves (e.g., "C10") correctly
+  - Supports complex accidentals (e.g., "F##3")
+  - More reliable than custom string manipulation
+- **Howler.js Public API**: Replaced private `_sprite` property access with public API
+  - Uses `sprite` property in Howler constructor for better maintainability
+  - Generated sprites dynamically with `generateMidiSprites()` helper function
+  - Future-proof implementation that won't break with Howler updates
+- **CSS Class-based Filtering**: Replaced inline styles with Tailwind's `hidden` class
+  - Better maintainability and consistency with utility-first approach
+  - Improved performance with class manipulation vs inline styles
+- **Modal Element Caching**: Extended DOM caching to modal system
+  - Eliminated repeated DOM queries during modal interactions
+  - Better performance for modal open/close operations
+  - Consistent with existing caching patterns in the app
+
+### Fixed
+- **Modal Console Access**: Fixed modal not being accessible from browser console
+- **Error Handling**: Enhanced error handling throughout the application
+  - Chord processing errors now show user-friendly modal
+  - Notation display errors provide clear feedback
+  - Audio playback errors inform users without breaking flow
+
 ## [2.0.2] - 2025-07-15
 
 ### Improved

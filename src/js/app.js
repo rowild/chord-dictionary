@@ -32,12 +32,28 @@ const notatedResultElem = document.getElementById('notated-result')
 
 const inputField = document.getElementById('filterChords')
 
-// Howler initialisation
+// Helper function to generate MIDI sprite configuration
+function generateMidiSprites() {
+    const sprites = {}
+    const lengthOfNote = 3000
+    const loopStart = 24 // MIDI number of C1; if used with A0, use 21
+    let startTimeIndex = 9000 // "sound.mp3" starts with A0, so "C1" is 9000ms into the file
+    
+    for (let i = loopStart; i <= 108; i++) {
+        // Generate sprite configuration using public API format
+        sprites[i.toString()] = [startTimeIndex, lengthOfNote]
+        startTimeIndex += lengthOfNote
+    }
+    
+    return sprites
+}
+
+// Howler initialisation with sprites defined using public API
 const sound = new Howl({
     src: [soundsUrl],
+    sprite: generateMidiSprites(), // ✅ Use public API instead of private _sprite
     onload() {
-        console.log('sound file loaded');
-        soundEngine.init()
+        console.log('sound file loaded with sprites');
     },
     onloaderror(error, msg) {
         console.error('Error loading the sound file. Error:', error, '\nMessage:', msg);
@@ -229,6 +245,12 @@ const app = {
             // Display user-friendly error message
             chordResultElem.textContent = 'Error: Unable to process chord'
             notesResultElem.textContent = 'Please try a different chord'
+            // Show error modal to user
+            modal.showError(
+                'Chord Processing Error',
+                'Unable to process the selected chord. Please try a different chord.',
+                error.message
+            )
             // Don't attempt to play sound or draw notes if chord is invalid
         }
     },
@@ -263,13 +285,15 @@ const app = {
      * @returns {Object} - Clef configuration {clefType, clefSize, clefAnnotation}
      */
     determineClef(notes) {
-        // Extract octave numbers from first and last notes
-        let lowestNoteInChord = parseInt(notes[0].slice(-1))
-        let highestNoteInChord = parseInt(notes[notes.length - 1].slice(-1))
+        // Use Tonal's Note.octave() for reliable parsing of note strings
+        // This handles double-digit octaves and complex accidentals properly
+        let lowestNoteInChord = Note.octave(notes[0])
+        let highestNoteInChord = Note.octave(notes[notes.length - 1])
 
-        // Error handling: Validate note format
-        if (isNaN(lowestNoteInChord) || isNaN(highestNoteInChord)) {
-            throw new Error('Invalid note format - unable to determine octave')
+        // Error handling: Validate octave extraction
+        if (lowestNoteInChord === null || lowestNoteInChord === undefined || 
+            highestNoteInChord === null || highestNoteInChord === undefined) {
+            throw new Error(`Unable to determine octave from note strings: ${notes[0]} - ${notes[notes.length - 1]}`)
         }
 
         let clefType = 'treble'
@@ -367,6 +391,12 @@ const app = {
             if (notatedResultElem) {
                 notatedResultElem.innerHTML = '<div class="p-4 text-red-600 text-sm">Unable to display notation</div>'
             }
+            // Show error modal to user
+            modal.showError(
+                'Notation Display Error',
+                'Unable to display musical notation for this chord. The chord information is still available above.',
+                error.message
+            )
         }
     },
     /**
@@ -402,11 +432,13 @@ const app = {
             // const w = this.elements.chordItems[i].offsetWidth
 
             if (txtValue.indexOf(filter) > -1) {
-                this.elements.chordItems[i].style.display = 'block'
+                // Show chord - remove Tailwind's hidden class
+                this.elements.chordItems[i].classList.remove('hidden')
             } else {
                 // If no chord is found, decrement the counter
                 counter--
-                this.elements.chordItems[i].style.display = 'none'
+                // Hide chord - add Tailwind's hidden class
+                this.elements.chordItems[i].classList.add('hidden')
             }
         }
 
@@ -437,24 +469,10 @@ const app = {
 
 const soundEngine = {
     init() {
-        // Here the soundfile will be split into its sprites using milliseconds.
-        // The file should rovide a new sprite every 2 seconds...
-        // "pianosprites" starts at C1, while "sounds.mp3" starts with A0!!!
-        // Also: C1 is MIDI number 24, 96 = C7 (A0 would be 21)
-        // Call this in Howler's onload function (meaning: when sound file is loaded.)
-
-        const lengthOfNote = 3000
-        const loopStart = 24 // MIDI number of C1; if used with A0, use 21
-        let startTimeIndex = 9000 // "sound.mp3" starts with A0, so "C1" is 9000ms into the file
-
-        for (let i = loopStart; i <= 108; i++) {
-            // add sprites to Howler's sound object
-            sound['_sprite'][i] = [startTimeIndex, lengthOfNote]
-            // increment the startTimeIndex
-            startTimeIndex += lengthOfNote
-        }
-
-        // Play a C Major Chord
+        // Sprites are now defined during Howler initialization using public API
+        // No need to manipulate private _sprite property
+        
+        // Play a C Major Chord (example usage)
         // sound.play('48');
         // sound.play('52');
         // sound.play('55');
@@ -500,96 +518,182 @@ const soundEngine = {
 
         } catch (error) {
             console.error('Error playing audio:', error)
-            // Silently fail for audio - don't interrupt user experience
+            // Show error modal to user
+            modal.showError(
+                'Audio Playback Error',
+                'Unable to play chord audio. The chord visualization is still available.',
+                error.message
+            )
         }
     }
 }
 
 app.init()
 
+// TEST CASE: Error Modal Testing
+// The modal is now globally accessible as window.modal for testing
+// 
+// Test in browser console:
+// 1. modal.showError('Test Error', 'This is a test error message for development.', 'Error details: Testing error modal display')
+// 2. app.state.selectedChord = 'invalid-chord-name'; app.displayChordInfo()  // Triggers real error
+// 3. Uncomment line below to test automatically on page load:
+// modal.showError('Auto Test', 'This error shows automatically on page load for testing.', 'Remove this line in production')
+
 // Modal functionality
 const modal = {
+    // Cache modal elements for performance - eliminates repeated DOM queries
+    elements: {
+        acknowledgements: {
+            modal: null,
+            openBtn: null,
+            closeBtn: null,
+            content: null
+        },
+        information: {
+            modal: null,
+            openBtn: null,
+            closeBtn: null,
+            content: null
+        },
+        error: {
+            modal: null,
+            message: null,
+            closeBtn: null,
+            okBtn: null,
+            content: null
+        }
+    },
+    
     init() {
-        // Modal configuration - eliminates code duplication
-        const modalConfigs = [
-            {
-                modalId: 'acknowledgements-modal',
-                openBtnId: 'acknowledgements-btn',
-                closeBtnId: 'close-modal'
-            },
-            {
-                modalId: 'information-modal',
-                openBtnId: 'information-btn',
-                closeBtnId: 'close-info-modal'
-            }
-        ]
-
-        // Setup each modal using configuration
-        modalConfigs.forEach(config => {
-            this.setupModal(config)
-        })
-
-        // Global escape key handler for all modals
+        // Cache all modal elements once during initialization
+        this.elements.acknowledgements.modal = document.getElementById('acknowledgements-modal')
+        this.elements.acknowledgements.openBtn = document.getElementById('acknowledgements-btn')
+        this.elements.acknowledgements.closeBtn = document.getElementById('close-modal')
+        this.elements.acknowledgements.content = this.elements.acknowledgements.modal?.querySelector('.bg-white')
+        
+        this.elements.information.modal = document.getElementById('information-modal')
+        this.elements.information.openBtn = document.getElementById('information-btn')
+        this.elements.information.closeBtn = document.getElementById('close-info-modal')
+        this.elements.information.content = this.elements.information.modal?.querySelector('.bg-white')
+        
+        this.elements.error.modal = document.getElementById('error-modal')
+        this.elements.error.message = document.getElementById('error-message')
+        this.elements.error.closeBtn = document.getElementById('close-error-modal')
+        this.elements.error.okBtn = document.getElementById('error-ok-btn')
+        this.elements.error.content = this.elements.error.modal?.querySelector('.bg-red-600')
+        
+        // Setup event listeners using cached elements
+        this.setupModalEvents()
+        
+        // Global escape key handler for all modals using cached elements
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                modalConfigs.forEach(config => {
-                    const modal = document.getElementById(config.modalId)
-                    if (modal && modal.style.pointerEvents !== 'none') {
-                        this.closeModal(config.modalId)
-                    }
-                })
+                if (this.elements.acknowledgements.modal && this.elements.acknowledgements.modal.style.pointerEvents !== 'none') {
+                    this.closeModal('acknowledgements')
+                }
+                if (this.elements.information.modal && this.elements.information.modal.style.pointerEvents !== 'none') {
+                    this.closeModal('information')
+                }
+                if (this.elements.error.modal && this.elements.error.modal.style.pointerEvents !== 'none') {
+                    this.closeModal('error')
+                }
             }
         })
     },
 
-    // Generic modal setup function - eliminates duplication
-    setupModal(config) {
-        const modal = document.getElementById(config.modalId)
-        const openBtn = document.getElementById(config.openBtnId)
-        const closeBtn = document.getElementById(config.closeBtnId)
+    // Setup modal event listeners using cached elements
+    setupModalEvents() {
+        // Acknowledgements modal events
+        if (this.elements.acknowledgements.openBtn) {
+            this.elements.acknowledgements.openBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                this.openModal('acknowledgements')
+            })
+        }
+        
+        if (this.elements.acknowledgements.closeBtn) {
+            this.elements.acknowledgements.closeBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                this.closeModal('acknowledgements')
+            })
+        }
+        
+        if (this.elements.acknowledgements.modal) {
+            this.elements.acknowledgements.modal.addEventListener('click', (e) => {
+                if (e.target === this.elements.acknowledgements.modal) {
+                    this.closeModal('acknowledgements')
+                }
+            })
+        }
+        
+        // Information modal events
+        if (this.elements.information.openBtn) {
+            this.elements.information.openBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                this.openModal('information')
+            })
+        }
+        
+        if (this.elements.information.closeBtn) {
+            this.elements.information.closeBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                this.closeModal('information')
+            })
+        }
+        
+        if (this.elements.information.modal) {
+            this.elements.information.modal.addEventListener('click', (e) => {
+                if (e.target === this.elements.information.modal) {
+                    this.closeModal('information')
+                }
+            })
+        }
+        
+        // Error modal events
+        if (this.elements.error.closeBtn) {
+            this.elements.error.closeBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                this.closeModal('error')
+            })
+        }
+        
+        if (this.elements.error.okBtn) {
+            this.elements.error.okBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                this.closeModal('error')
+            })
+        }
+        
+        if (this.elements.error.modal) {
+            this.elements.error.modal.addEventListener('click', (e) => {
+                if (e.target === this.elements.error.modal) {
+                    this.closeModal('error')
+                }
+            })
+        }
+    },
 
-        // Error handling: Check if elements exist
-        if (!modal || !openBtn || !closeBtn) {
-            console.warn(`Modal setup failed - missing elements for ${config.modalId}`)
+    openModal(modalType) {
+        const cached = this.elements[modalType]
+        
+        // Error handling: Check if cached elements exist
+        if (!cached || !cached.modal || !cached.content) {
+            console.warn(`Modal elements not found for ${modalType}`)
             return
         }
 
-        // Open modal event
-        openBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-            this.openModal(config.modalId)
-        })
-
-        // Close modal event
-        closeBtn.addEventListener('click', (e) => {
-            e.preventDefault()
-            this.closeModal(config.modalId)
-        })
-
-        // Close modal when clicking outside
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                this.closeModal(config.modalId)
-            }
-        })
-    },
-
-    openModal(modalId) {
-        const modal = document.getElementById(modalId)
-        const modalContent = modal.querySelector('.bg-white')
-
         // Enable interaction and start animation
-        modal.style.pointerEvents = 'auto'
+        cached.modal.style.pointerEvents = 'auto'
 
         // GSAP animation timeline
         const tl = gsap.timeline()
 
-        tl.to(modal, {
+        tl.to(cached.modal, {
             opacity: 1,
             duration: 0.3,
             ease: "power2.out"
         })
-        .fromTo(modalContent, {
+        .fromTo(cached.content, {
             scale: 0.8,
             opacity: 0
         }, {
@@ -600,29 +704,79 @@ const modal = {
         }, "-=0.1")
     },
 
-    closeModal(modalId) {
-        const modal = document.getElementById(modalId)
-        const modalContent = modal.querySelector('.bg-white')
+    closeModal(modalType) {
+        const cached = this.elements[modalType]
+        
+        // Error handling: Check if cached elements exist
+        if (!cached || !cached.modal || !cached.content) {
+            console.warn(`Modal elements not found for ${modalType}`)
+            return
+        }
 
         // GSAP animation timeline
         const tl = gsap.timeline({
             onComplete: () => {
-                modal.style.pointerEvents = 'none'
+                cached.modal.style.pointerEvents = 'none'
             }
         })
 
-        tl.to(modalContent, {
+        tl.to(cached.content, {
             scale: 0.8,
             opacity: 0,
             duration: 0.2,
             ease: "power2.in"
         })
-        .to(modal, {
+        .to(cached.modal, {
             opacity: 0,
             duration: 0.2,
             ease: "power2.in"
+        }, "-=0.1")
+    },
+    
+    /**
+     * Show error modal with user-friendly error message
+     * @param {string} title - Error title
+     * @param {string} message - User-friendly error message
+     * @param {string} details - Technical details (optional)
+     */
+    showError(title, message, details = null) {
+        if (!this.elements.error.modal || !this.elements.error.message) {
+            console.warn('Error modal elements not found')
+            return
+        }
+        
+        // Set error message content
+        this.elements.error.message.innerHTML = `
+            <h3 class="font-semibold mb-2">${title}</h3>
+            <p class="mb-2">${message}</p>
+            ${details ? `<details class="text-sm text-red-200 mt-2">
+                <summary class="cursor-pointer hover:text-white">Technical Details</summary>
+                <pre class="mt-1 text-xs bg-red-700 p-2 rounded">${details}</pre>
+            </details>` : ''}
+        `
+        
+        // Show modal with GSAP animation (reuse existing openModal logic)
+        this.elements.error.modal.style.pointerEvents = 'auto'
+        
+        const tl = gsap.timeline()
+        tl.to(this.elements.error.modal, {
+            opacity: 1,
+            duration: 0.3,
+            ease: "power2.out"
+        })
+        .fromTo(this.elements.error.content, {
+            scale: 0.8,
+            opacity: 0
+        }, {
+            scale: 1,
+            opacity: 1,
+            duration: 0.3,
+            ease: "back.out(1.7)"
         }, "-=0.1")
     }
 }
 
 modal.init()
+
+// Make modal globally accessible for testing and debugging
+window.modal = modal
