@@ -4,7 +4,7 @@
  * Based on the tutorial: https://www.youtube.com/watch?v=TUZe_Zxm0Ic&list=PLXAhCH9FJ8zWm17RdQFAkdsghd8aKU_dq
  */
 import { Note, Chord, ChordType } from 'tonal'
-import { Howler, howl } from 'howler'
+import { Howl } from 'howler'
 import VexFlow from 'vexflow'
 import { gsap } from 'gsap'
 import soundsUrl from '../assets/sounds.mp3'

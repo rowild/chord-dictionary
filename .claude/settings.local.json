@@ -9,7 +9,8 @@
       "Bash(nvm use:*)",
       "Bash(curl:*)",
       "Bash(lsof:*)",
-      "Bash(npx tailwindcss:*)"
+      "Bash(npx tailwindcss:*)",
+      "Bash(grep:*)"
     ]
   },
   "enableAllProjectMcpServers": false

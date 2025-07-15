@@ -2,6 +2,8 @@
 
 🎵 A modernized chord visualizer with playback functionality using the latest music libraries and modern web technologies. Features interactive chord selections with audio playback and musical notation display.
 
+**Created:** February 28, 2020 | **Updated:** July 15, 2025
+
 ## 🚀 Modern Tech Stack (2025)
 
 ### Core Libraries (Latest Versions)
