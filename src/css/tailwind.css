@@ -51,3 +51,37 @@
 #chord-selector button.hidden {
   display: none !important;
 }
+
+/* Active state styles */
+#note-selector button.active,
+#octave-selector button.active {
+  @apply bg-gray-900 text-gray-100;
+}
+
+#chord-selector button.active {
+  @apply bg-gray-900 text-gray-100;
+}
+
+/* Ensure active state overrides hover and nth-child styles */
+#note-selector button.active:hover,
+#note-selector .flex button:nth-of-type(2n).active,
+#note-selector .flex button:nth-of-type(2n).active:hover,
+#octave-selector button.active:hover,
+#chord-selector button.active:hover {
+  @apply bg-gray-900 text-gray-100;
+}
+
+/* Numbered pills for speech recognition */
+.button-pill {
+  @apply absolute -top-2 -left-2;
+  @apply w-5 h-5;
+  @apply bg-gray-700 text-gray-100;
+  @apply rounded-full;
+  @apply text-xs font-bold;
+  @apply flex items-center justify-center;
+  @apply shadow-md;
+  @apply z-10;
+  @apply pointer-events-none;
+  line-height: 1;
+  font-size: 0.625rem; /* 10px - smaller than text-xs */
+}

@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.5] - 2025-07-15
+
+### Added
+- **Sticky Footer Layout**: Implemented proper footer positioning using Flexbox
+  - Footer stays at bottom of viewport on short content
+  - Footer moves down naturally when content requires scrolling
+  - Responsive across all screen sizes using `min-h-screen flex flex-col`
+- **Active State Visual Feedback**: Added active button states for better UX
+  - Active buttons display with `bg-gray-900` background and `text-gray-100` text
+  - Automatic active state management when buttons are clicked
+  - Initial active states set for default selections (C note, octave 1)
+- **Speech Recognition Support**: Added numbered pills to chord buttons only
+  - Sequential numbering from 1 to total chord count
+  - Subtle grey styling (`bg-gray-700` background, `text-gray-100` text)
+  - Small font size (10px) positioned in top-left corner extending beyond button borders
+  - Facilitates future voice command integration
+
+### Improved
+- **Button Interaction**: Enhanced button click handling with proper active state management
+  - Visual feedback shows current selections across all button types
+  - Consistent styling with hover and active state interactions
+- **Accessibility**: Better semantic HTML structure with proper main/footer elements
+  - Improved layout structure following modern web standards
+  - Enhanced keyboard and screen reader compatibility
+
+### Fixed
+- **Chord Processing Error**: Resolved issue where button text included pill numbers
+  - Implemented data attribute storage for original button text
+  - Clean chord name processing prevents "Invalid or unrecognized chord" errors
+  - Separate handling for chord buttons (with pills) vs note/octave buttons (without pills)
+
 ## [2.0.4] - 2025-07-15
 
 ### Refactored

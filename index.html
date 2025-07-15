@@ -9,7 +9,7 @@
     <script src="src/js/app.js" type="module" defer></script>
 </head>
 
-<body class="font-sans leading-tight antialiased bg-gray-100">
+<body class="font-sans leading-tight antialiased bg-gray-100 min-h-screen flex flex-col">
 
     <header class="bg-black text-gray-500">
         <div class="container mx-auto px-6">
@@ -40,80 +40,84 @@
             </div>
 
             <nav class="[ nav ] flex flex-wrap items-center pt-4 pb-8">
-                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Chord Dictionary <sup class="text-xs">v2.0.4</sup></a>
+                <a href="#" class="text-gray-500 mr-2 py-1 pr-3 rounded hover:text-gray-200 hover:bg-black-20">Chord Dictionary <sup class="text-xs">v2.0.5</sup></a>
             </nav>
 
         </div>
     </header>
 
-    <div class="[ card results ] before:bg-header mb-8">
-        <section class="flex container mx-auto px-6">
-            <div class="flex-4 bg-white shadow rounded-md md:w-3/4 p-6 ">
-                <header>
-                    <h1 class="text-xl font-semibold mb-6">Resulting Chord</h1>
-                </header>
-                <p class="mb-3">
-                    <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Root Note:</span>
-                    <span id="chosen-root-note">C1</span>
-                </p>
-                <p class="mb-3">
-                    <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Chord:</span>
-                    <span id="chosen-chord">Please select a chord structure.</span>
-                </p>
-                <p class="mb-3">
-                    <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Intervals:</span>
-                    <span id="chord-result"></span>
-                </p>
-                <p class="mb-3">
-                    <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Notes:</span>
-                    <span id="notes-result"></span>
-                </p>
-            </div>
-            <div class="flex">
-                <div id="notated-result" class="block bg-white shadow ml-4 mt-20 relative rounded-md text-center">
+    <main class="flex-grow">
+
+        <section class="[ card results ] before:bg-header mb-8">
+            <div class="flex container mx-auto px-6">
+                <div class="flex-4 bg-white shadow rounded-md md:w-3/4 p-6 ">
+                    <header>
+                        <h1 class="text-xl font-semibold mb-6">Resulting Chord</h1>
+                    </header>
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Root Note:</span>
+                        <span id="chosen-root-note">C1</span>
+                    </p>
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Chord:</span>
+                        <span id="chosen-chord">Please select a chord structure.</span>
+                    </p>
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Intervals:</span>
+                        <span id="chord-result"></span>
+                    </p>
+                    <p class="mb-3">
+                        <span class="mr-4 w-24 border-b border-gray-200 pb-1 relative inline-block">Notes:</span>
+                        <span id="notes-result"></span>
+                    </p>
                 </div>
-            </div>
-        </section>
-    </div>
-
-    <section class="[ chord-builder-section ] container mx-auto px-6">
-
-        <div class="flex flex-column flex-wrap">
-            <div class="[ define-note-octave ] relative w-64 pr-6 mb-6">
-
-                <h2 class="text-xl font-semibold mb-5">Choose</h2>
-
-                <div class="flex justify-around px-3 mb-3">
-                    <p class="text-gray-500">Note</p>
-                    <p class="text-gray-500">Octave</p>
-                </div>
-
-                <div class="flex flex-col bg-white shadow rounded sticky top-0 mb-6">
-                    <div class="flex">
-                        <div class="w-1/2 border-r border-gray-200">
-                            <div id="note-selector" class="flex flex-col flex-wrap relative px-5 pt-5 pb-3"></div>
-                        </div>
-                        <div class="w-1/2">
-                            <div id="octave-selector" class="flex flex-col flex-wrap items-center relative px-5 pt-5 pb-3"></div>
-                        </div>
+                <div class="flex">
+                    <div id="notated-result" class="block bg-white shadow ml-4 mt-20 relative rounded-md text-center">
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="flex-1 mb-6">
-                <h2 class="text-xl font-semibold mb-2">Chord Structures</h2>
+        <section class="[ chord-builder-section ] container mx-auto px-6">
 
-                <input type="text" id="filter-chords" placeholder="Search for a chord, e.g. 'sus', 'M', 'b5' ... (case sensitive)" aria-label="Search for chord" class="rounded border border-gray-200 p-3 w-full mb-2" />
-                <p id="found-items" class="mb-2 ml-5 w-full text-left text-gray-500">Found Items: </p>
+            <div class="flex flex-column flex-wrap">
+                <div class="[ define-note-octave ] relative w-64 pr-6 mb-6">
 
-                <div class="bg-white rounded-md shadow mb-4">
-                    <div id="chord-selector" class="flex flex-wrap justify-between p-5"></div>
+                    <h2 class="text-xl font-semibold mb-5">Choose</h2>
+
+                    <div class="flex justify-around px-3 mb-3">
+                        <p class="text-gray-500">Note</p>
+                        <p class="text-gray-500">Octave</p>
+                    </div>
+
+                    <div class="flex flex-col bg-white shadow rounded sticky top-0 mb-6">
+                        <div class="flex">
+                            <div class="w-1/2 border-r border-gray-200">
+                                <div id="note-selector" class="flex flex-col flex-wrap relative px-5 pt-5 pb-3"></div>
+                            </div>
+                            <div class="w-1/2">
+                                <div id="octave-selector" class="flex flex-col flex-wrap items-center relative px-5 pt-5 pb-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 mb-6">
+                    <h2 class="text-xl font-semibold mb-2">Chord Structures</h2>
+
+                    <input type="text" id="filter-chords" placeholder="Search for a chord, e.g. 'sus', 'M', 'b5' ... (case sensitive)" aria-label="Search for chord" class="rounded border border-gray-200 p-3 w-full mb-2" />
+                    <p id="found-items" class="mb-2 ml-5 w-full text-left text-gray-500">Found Items: </p>
+
+                    <div class="bg-white rounded-md shadow mb-4">
+                        <div id="chord-selector" class="flex flex-wrap justify-between p-5"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="bg-black">
+    </main>
+
+    <footer class="bg-black">
         <div class="container flex flex-row justify-between items-center mx-auto px-6">
             <div>
                 <button id="information-btn" class="inline-block text-gray-500 mr-2 my-2 pr-2 py-2 rounded hover:bg-black-20 hover:text-white cursor-pointer">Information</button>
@@ -121,227 +125,233 @@
             </div>
             <div class="text-sm text-gray-700 my-2 py-2">&copy; by <a href="https://rowild.at" target="_blank" class="text-blue-600 hover:text-blue-800 underline">rowild</a> 2020-2025</div>
         </div>
-    </div>
+    </footer>
 
-    <!-- Acknowledgements Modal -->
-    <div id="acknowledgements-modal" 
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none"
-        role="dialog"
-        aria-modal="true"
-        tabindex="-1"
-        aria-labelledby="acknowledgements-modal-title"
-        aria-describedby="acknowledgements-modal-desc">
-        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800" id="acknowledgements-modal-title">Acknowledgements</h2>
-                    <button id="close-modal" class="text-gray-400 hover:text-gray-600 text-2xl font-bold w-8 h-8 flex items-center justify-center">
-                        &times;
-                    </button>
-                </div>
-                
-                <div id="acknowledgements-modal-desc" class="text-gray-700 mb-6">
-                    <p class="mb-4">
-                        This application is built with amazing open-source tools and libraries. 
-                        We extend our heartfelt gratitude to all the developers who created and maintain these incredible projects.
-                    </p>
-                    <p class="mb-4">
-                        Without their dedication and hard work, this chord player would not be possible.
-                    </p>
-                </div>
 
-                <div class="space-y-4">
-                    <div class="border-l-4 border-blue-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Music Theory & Notation</h3>
-                        <div class="space-y-2">
-                            <div>
-                                <strong>Tonal v6.4.2</strong> - Modern music theory library
-                                <br>
-                                <a href="https://github.com/tonaljs/tonal" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
-                                    github.com/tonaljs/tonal
-                                </a>
+    <!-- Modals -->
+    <div class="modals">
+
+        <!-- Acknowledgements Modal -->
+        <div id="acknowledgements-modal" 
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none"
+            role="dialog"
+            aria-modal="true"
+            tabindex="-1"
+            aria-labelledby="acknowledgements-modal-title"
+            aria-describedby="acknowledgements-modal-desc">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800" id="acknowledgements-modal-title">Acknowledgements</h2>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600 text-2xl font-bold w-8 h-8 flex items-center justify-center">
+                            &times;
+                        </button>
+                    </div>
+                    
+                    <div id="acknowledgements-modal-desc" class="text-gray-700 mb-6">
+                        <p class="mb-4">
+                            This application is built with amazing open-source tools and libraries. 
+                            We extend our heartfelt gratitude to all the developers who created and maintain these incredible projects.
+                        </p>
+                        <p class="mb-4">
+                            Without their dedication and hard work, this chord player would not be possible.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Music Theory & Notation</h3>
+                            <div class="space-y-2">
+                                <div>
+                                    <strong>Tonal v6.4.2</strong> - Modern music theory library
+                                    <br>
+                                    <a href="https://github.com/tonaljs/tonal" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                        github.com/tonaljs/tonal
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>VexFlow v5.0.0</strong> - Music notation rendering library
+                                    <br>
+                                    <a href="https://github.com/0xfe/vexflow" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                        github.com/0xfe/vexflow
+                                    </a>
+                                </div>
                             </div>
-                            <div>
-                                <strong>VexFlow v5.0.0</strong> - Music notation rendering library
-                                <br>
-                                <a href="https://github.com/0xfe/vexflow" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
-                                    github.com/0xfe/vexflow
-                                </a>
+                        </div>
+
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Audio & Animation</h3>
+                            <div class="space-y-2">
+                                <div>
+                                    <strong>Howler.js v2.2.4</strong> - Web audio library for chord playback
+                                    <br>
+                                    <a href="https://github.com/goldfire/howler.js" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                        github.com/goldfire/howler.js
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>GSAP v3.13.0</strong> - Professional animation library
+                                    <br>
+                                    <a href="https://greensock.com/gsap/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                        greensock.com/gsap
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-l-4 border-purple-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Development Tools</h3>
+                            <div class="space-y-2">
+                                <div>
+                                    <strong>Vite v7.0.4</strong> - Fast build tool and development server
+                                    <br>
+                                    <a href="https://vitejs.dev/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                        vitejs.dev
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>Tailwind CSS v4.1.11</strong> - Utility-first CSS framework
+                                    <br>
+                                    <a href="https://tailwindcss.com/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                        tailwindcss.com
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="border-l-4 border-green-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Audio & Animation</h3>
-                        <div class="space-y-2">
-                            <div>
-                                <strong>Howler.js v2.2.4</strong> - Web audio library for chord playback
-                                <br>
-                                <a href="https://github.com/goldfire/howler.js" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
-                                    github.com/goldfire/howler.js
-                                </a>
-                            </div>
-                            <div>
-                                <strong>GSAP v3.13.0</strong> - Professional animation library
-                                <br>
-                                <a href="https://greensock.com/gsap/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
-                                    greensock.com/gsap
-                                </a>
-                            </div>
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-600 text-center">
+                            🙏 Thank you to all the maintainers, contributors, and the entire open-source community!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information Modal -->
+        <div id="information-modal" 
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none"
+            role="dialog"
+            aria-modal="true"
+            tabindex="-1"
+            aria-labelledby="information-modal-title"
+            aria-describedby="information-modal-desc">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800" id="information-modal-title">About Chord Player</h2>
+                        <button id="close-info-modal" class="text-gray-400 hover:text-gray-600 text-2xl font-bold w-8 h-8 flex items-center justify-center">
+                            &times;
+                        </button>
+                    </div>
+                    
+                    <div id="information-modal-desc" class="text-gray-700 mb-6">
+                        <p class="mb-4 text-lg">
+                            🎵 A modern music theory tool for exploring chord structures, playback, and notation visualization.
+                        </p>
+                        <p class="mb-4">
+                            This application serves as a quick reference and lookup tool for musicians, composers, and music students who need to understand chord structures and hear how they sound.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">🎼 Chord Discovery</h3>
+                            <p class="text-gray-700">
+                                Find any chord by selecting a <strong>root note</strong> and <strong>chord symbol</strong>. 
+                                The app instantly shows you the chord's interval structure and the specific notes that make up the chord.
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">🔊 Audio Playback</h3>
+                            <p class="text-gray-700">
+                                Every chord is played back instantly using high-quality piano samples. 
+                                This helps you <strong>hear the harmonic relationships</strong> and understand how different chord types sound.
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-purple-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">🎹 Multiple Registers</h3>
+                            <p class="text-gray-700">
+                                Choose from <strong>8 different octaves</strong> (0-7) to explore how chords sound in different registers. 
+                                Perfect for understanding voicing and finding the right range for your music.
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-red-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">🎼 Music Notation</h3>
+                            <p class="text-gray-700">
+                                See your chords displayed in <strong>standard music notation</strong> with automatic clef selection. 
+                                The app intelligently chooses treble or bass clef based on the chord's register.
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-yellow-500 pl-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">🔍 Chord Search</h3>
+                            <p class="text-gray-700">
+                                Use the search filter to quickly find specific chord types. 
+                                Search for terms like <code class="bg-gray-100 px-1 rounded">"sus"</code>, <code class="bg-gray-100 px-1 rounded">"M"</code>, <code class="bg-gray-100 px-1 rounded">"b5"</code>, or <code class="bg-gray-100 px-1 rounded">"7"</code> to narrow down your options.
+                            </p>
                         </div>
                     </div>
 
-                    <div class="border-l-4 border-purple-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Development Tools</h3>
-                        <div class="space-y-2">
-                            <div>
-                                <strong>Vite v7.0.4</strong> - Fast build tool and development server
-                                <br>
-                                <a href="https://vitejs.dev/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
-                                    vitejs.dev
-                                </a>
-                            </div>
-                            <div>
-                                <strong>Tailwind CSS v4.1.11</strong> - Utility-first CSS framework
-                                <br>
-                                <a href="https://tailwindcss.com/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
-                                    tailwindcss.com
-                                </a>
-                            </div>
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">💡 Perfect For:</h3>
+                        <ul class="text-gray-700 space-y-1">
+                            <li>• <strong>Musicians</strong> learning new chord progressions</li>
+                            <li>• <strong>Composers</strong> exploring harmonic possibilities</li>
+                            <li>• <strong>Music students</strong> studying music theory</li>
+                            <li>• <strong>Quick reference</strong> during practice or composition</li>
+                            <li>• <strong>Ear training</strong> with immediate audio feedback</li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-600 text-center">
+                            🎯 Simple, fast, and comprehensive - your go-to chord reference tool!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div id="error-modal" 
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none"
+            role="dialog"
+            aria-modal="true"
+            tabindex="-1"
+            aria-labelledby="error-modal-title"
+            aria-describedby="error-message">
+            <div class="bg-red-600 text-white rounded-lg shadow-xl max-w-md w-full mx-4" id="error-modal-content">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="text-red-200 mr-3">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                            </svg>
                         </div>
+                        <h2 class="text-xl font-bold" id="error-modal-title">Error</h2>
+                        <button id="close-error-modal" class="ml-auto text-red-200 hover:text-white text-2xl font-bold">
+                            &times;
+                        </button>
                     </div>
-                </div>
 
-                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-600 text-center">
-                        🙏 Thank you to all the maintainers, contributors, and the entire open-source community!
-                    </p>
+                    <div id="error-message" class="text-red-100 mb-4" aria-label="Close error modal">
+                        <!-- Error message will be inserted here -->
+                    </div>
+                    
+                    <div class="text-center">
+                        <button id="error-ok-btn" class="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-lg font-semibold">
+                            OK
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Information Modal -->
-    <div id="information-modal" 
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none"
-        role="dialog"
-        aria-modal="true"
-        tabindex="-1"
-        aria-labelledby="information-modal-title"
-        aria-describedby="information-modal-desc">
-        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800" id="information-modal-title">About Chord Player</h2>
-                    <button id="close-info-modal" class="text-gray-400 hover:text-gray-600 text-2xl font-bold w-8 h-8 flex items-center justify-center">
-                        &times;
-                    </button>
-                </div>
-                
-                <div id="information-modal-desc" class="text-gray-700 mb-6">
-                    <p class="mb-4 text-lg">
-                        🎵 A modern music theory tool for exploring chord structures, playback, and notation visualization.
-                    </p>
-                    <p class="mb-4">
-                        This application serves as a quick reference and lookup tool for musicians, composers, and music students who need to understand chord structures and hear how they sound.
-                    </p>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="border-l-4 border-blue-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">🎼 Chord Discovery</h3>
-                        <p class="text-gray-700">
-                            Find any chord by selecting a <strong>root note</strong> and <strong>chord symbol</strong>. 
-                            The app instantly shows you the chord's interval structure and the specific notes that make up the chord.
-                        </p>
-                    </div>
-
-                    <div class="border-l-4 border-green-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">🔊 Audio Playback</h3>
-                        <p class="text-gray-700">
-                            Every chord is played back instantly using high-quality piano samples. 
-                            This helps you <strong>hear the harmonic relationships</strong> and understand how different chord types sound.
-                        </p>
-                    </div>
-
-                    <div class="border-l-4 border-purple-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">🎹 Multiple Registers</h3>
-                        <p class="text-gray-700">
-                            Choose from <strong>8 different octaves</strong> (0-7) to explore how chords sound in different registers. 
-                            Perfect for understanding voicing and finding the right range for your music.
-                        </p>
-                    </div>
-
-                    <div class="border-l-4 border-red-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">🎼 Music Notation</h3>
-                        <p class="text-gray-700">
-                            See your chords displayed in <strong>standard music notation</strong> with automatic clef selection. 
-                            The app intelligently chooses treble or bass clef based on the chord's register.
-                        </p>
-                    </div>
-
-                    <div class="border-l-4 border-yellow-500 pl-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">🔍 Chord Search</h3>
-                        <p class="text-gray-700">
-                            Use the search filter to quickly find specific chord types. 
-                            Search for terms like <code class="bg-gray-100 px-1 rounded">"sus"</code>, <code class="bg-gray-100 px-1 rounded">"M"</code>, <code class="bg-gray-100 px-1 rounded">"b5"</code>, or <code class="bg-gray-100 px-1 rounded">"7"</code> to narrow down your options.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">💡 Perfect For:</h3>
-                    <ul class="text-gray-700 space-y-1">
-                        <li>• <strong>Musicians</strong> learning new chord progressions</li>
-                        <li>• <strong>Composers</strong> exploring harmonic possibilities</li>
-                        <li>• <strong>Music students</strong> studying music theory</li>
-                        <li>• <strong>Quick reference</strong> during practice or composition</li>
-                        <li>• <strong>Ear training</strong> with immediate audio feedback</li>
-                    </ul>
-                </div>
-
-                <div class="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-600 text-center">
-                        🎯 Simple, fast, and comprehensive - your go-to chord reference tool!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Error Modal -->
-    <div id="error-modal" 
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none"
-        role="dialog"
-        aria-modal="true"
-        tabindex="-1"
-        aria-labelledby="error-modal-title"
-        aria-describedby="error-message">
-        <div class="bg-red-600 text-white rounded-lg shadow-xl max-w-md w-full mx-4" id="error-modal-content">
-            <div class="p-6">
-                <div class="flex items-center mb-4">
-                    <div class="text-red-200 mr-3">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-xl font-bold" id="error-modal-title">Error</h2>
-                    <button id="close-error-modal" class="ml-auto text-red-200 hover:text-white text-2xl font-bold">
-                        &times;
-                    </button>
-                </div>
-
-                <div id="error-message" class="text-red-100 mb-4" aria-label="Close error modal">
-                    <!-- Error message will be inserted here -->
-                </div>
-                
-                <div class="text-center">
-                    <button id="error-ok-btn" class="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-lg font-semibold">
-                        OK
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
 
 </body>

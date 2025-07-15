@@ -115,6 +115,9 @@ const app = {
       );
       return;
     }
+    // Start numbering from 1 for chord buttons only
+    let buttonNumber = 1;
+    
     // Keep second param "index" for potential future use (e.g., debugging)
     ChordType.all().map((entry, index) => {
       // 34 = dim, 38 = dim7, 96 = alt7 // fixed with version 3.4.4 or so...
@@ -123,6 +126,7 @@ const app = {
       // }
       const chordBtn = createElem("button", entry.aliases[0]);
       chordBtn.classList.add("chord-selector-btn");
+      this.addNumberedPill(chordBtn, buttonNumber++);
       chordSelector.append(chordBtn);
     });
     // Note: chordEntry variable preserved for potential future use (e.g., debugging, chord metadata)
@@ -138,6 +142,58 @@ const app = {
     if (this.state.selectedChord !== null) {
       chosenChordElem.textContent = this.state.selectedChord;
     }
+  },
+
+  /**
+   * Sets active state for a button and removes active state from siblings.
+   * @param {HTMLElement} activeButton - The button to set as active
+   * @param {HTMLElement} container - The container holding all buttons
+   * @returns {void}
+   */
+  setActiveButton(activeButton, container) {
+    // Remove active class from all buttons in the container
+    const buttons = container.querySelectorAll('button');
+    buttons.forEach(button => button.classList.remove('active'));
+    
+    // Add active class to the clicked button
+    activeButton.classList.add('active');
+  },
+
+  /**
+   * Sets initial active states for default selections.
+   * @returns {void}
+   */
+  setInitialActiveStates() {
+    // Find and set active state for default note (C)
+    const defaultNoteButton = startNoteSelector.querySelector('button');
+    if (defaultNoteButton && defaultNoteButton.textContent === this.state.selectedStartNote) {
+      defaultNoteButton.classList.add('active');
+    }
+
+    // Find and set active state for default octave (1)
+    const defaultOctaveButton = Array.from(octaveSelector.querySelectorAll('button')).find(
+      button => button.textContent === this.state.selectedOctave
+    );
+    if (defaultOctaveButton) {
+      defaultOctaveButton.classList.add('active');
+    }
+  },
+
+  /**
+   * Adds a numbered pill to a button for speech recognition.
+   * @param {HTMLElement} button - The button element to add the pill to
+   * @param {number} number - The number to display in the pill
+   * @returns {void}
+   */
+  addNumberedPill(button, number) {
+    // Store the original button text before adding the pill
+    const originalText = button.textContent;
+    button.setAttribute('data-original-text', originalText);
+    
+    const pill = document.createElement('span');
+    pill.className = 'button-pill';
+    pill.textContent = number;
+    button.appendChild(pill);
   },
 
   /**
@@ -229,18 +285,21 @@ const app = {
     // Event delegation with proper button targeting - more robust than tagName checking
     startNoteSelector.addEventListener("click", (e) => {
       if (!e.target.matches("button")) return;
+      this.setActiveButton(e.target, startNoteSelector);
       this.state.selectedStartNote = e.target.textContent;
       this.updateChosenRootNoteElem();
     });
     octaveSelector.addEventListener("click", (e) => {
       if (!e.target.matches("button")) return;
+      this.setActiveButton(e.target, octaveSelector);
       this.state.selectedOctave = e.target.textContent;
       this.updateChosenRootNoteElem();
     });
     chordSelector.addEventListener("click", (e) => {
       // Event delegation: only respond to button clicks, ignore container clicks
       if (!e.target.matches("button")) return;
-      this.state.selectedChord = e.target.textContent;
+      this.setActiveButton(e.target, chordSelector);
+      this.state.selectedChord = e.target.getAttribute('data-original-text') || e.target.textContent;
       this.updateChosenRootNoteElem();
       this.displayChordInfo();
     });
@@ -340,6 +399,7 @@ const app = {
     );
 
     this.setupEventListeners();
+    this.setInitialActiveStates();
     setupStave(notatedResultElem);
   },
 };
